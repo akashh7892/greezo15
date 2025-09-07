@@ -172,7 +172,7 @@ export function PlansSection() {
                   </div>
                   <Button size="lg" onClick={handleConfirmOrder} disabled={isGenerating}>
                     {isGenerating ? <Loader2 className="mr-2 animate-spin" /> : <Send className="mr-2" />}
-                    Confirm Order via WhatsApp
+                    Order Now
                   </Button>
                 </div>
               </CardContent>
