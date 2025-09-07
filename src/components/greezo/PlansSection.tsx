@@ -63,7 +63,7 @@ export function PlansSection() {
     });
 
     if (result.success && result.message) {
-      const phoneNumber = '919876543210';
+      const phoneNumber = '9449614641';
       const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(result.message)}`;
       window.open(url, '_blank');
       toast({
