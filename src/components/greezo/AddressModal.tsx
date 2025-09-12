@@ -2,7 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { MapSelector, type Address } from './MapSelector';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+
+export interface Address {
+  formatted_address: string;
+  lat: number;
+  lng: number;
+  place_id?: string;
+}
 
 interface AddressModalProps {
   isOpen: boolean;
@@ -11,63 +21,85 @@ interface AddressModalProps {
 }
 
 export function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalProps) {
-  const [shouldRenderMap, setShouldRenderMap] = useState(false);
-  
-  const handleAddressSelect = (address: Address) => {
-    onAddressSelect(address);
-    onClose();
-  };
+  const [flat, setFlat] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [fullAddress, setFullAddress] = useState('');
+  const [error, setError] = useState('');
 
-  // Enhanced dialog timing to ensure portal is fully ready
   useEffect(() => {
     if (isOpen) {
-      // Reset map render state when opening
-      setShouldRenderMap(false);
-      
-      // Delay map rendering to ensure dialog portal and animations are complete
-      const timer = setTimeout(() => {
-        setShouldRenderMap(true);
-      }, 300); // Wait 300ms after dialog opens
-      
-      return () => {
-        clearTimeout(timer);
-      };
-    } else {
-      // Immediately hide map when closing
-      setShouldRenderMap(false);
+      // Reset form on open
+      setFlat('');
+      setLandmark('');
+      setFullAddress('');
+      setError('');
     }
   }, [isOpen]);
 
+  const handleConfirm = () => {
+    const combinedAddress = [flat, landmark, fullAddress].filter(Boolean).join(', ');
+    if (!combinedAddress.trim()) {
+      setError('Please enter a valid address.');
+      return;
+    }
+
+    onAddressSelect({
+      formatted_address: combinedAddress,
+      lat: 0, // No API, so no lat/lng
+      lng: 0, // No API, so no lat/lng
+    });
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-primary">
-            Select Delivery Address
+            Enter Delivery Address
           </DialogTitle>
           <DialogDescription>
-            Search for your location or click on the map to select your delivery address.
+            Please provide your complete delivery address.
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-4">
-          {/* Only render MapSelector when modal is open AND portal is stable */}
-          {isOpen && shouldRenderMap ? (
-            <MapSelector
-              onAddressSelect={handleAddressSelect}
-              onClose={onClose}
-            />
-          ) : isOpen ? (
-            <div className="flex items-center justify-center h-[400px] bg-gray-50 rounded-lg">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-                <p className="text-sm text-gray-600">Preparing map interface...</p>
-              </div>
+        <div className="space-y-4 py-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="flat">Flat / House No.</Label>
+              <Input id="flat" value={flat} onChange={(e) => setFlat(e.target.value)} placeholder="e.g., A-123" />
             </div>
-          ) : null}
+            <div className="space-y-2">
+              <Label htmlFor="landmark">Landmark</Label>
+              <Input id="landmark" value={landmark} onChange={(e) => setLandmark(e.target.value)} placeholder="e.g., Near City Park" />
+            </div>
+          </div>
+          <div className="space-y-2 pt-2">
+            <Label htmlFor="full-address">Full Address *</Label>
+            <Textarea
+              id="full-address"
+              placeholder="Enter your street, area, city, and pincode..."
+              value={fullAddress}
+              onChange={(e) => setFullAddress(e.target.value)}
+              className="min-h-[100px]"
+              autoFocus
+            />
+          </div>
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+        </div>
+        <div className="flex justify-end gap-2">
+           <Button variant="outline" onClick={onClose}>Cancel</Button>
+           <Button 
+             onClick={handleConfirm} 
+             disabled={!fullAddress.trim()}
+           >
+             Confirm Address
+           </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-export type { Address };

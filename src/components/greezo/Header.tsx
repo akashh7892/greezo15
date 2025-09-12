@@ -1,8 +1,10 @@
 
 "use client";
 
-import { Leaf } from 'lucide-react';
+import { Bell, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 import type { SectionRefs } from '@/app/page';
 
 type HeaderProps = {
@@ -21,10 +23,9 @@ export function Header({ scrollToSection }: HeaderProps) {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div 
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer group"
             onClick={() => scrollToSection('home')}
           >
-            <Leaf className="h-7 w-7 text-primary" />
             <span className="text-xl font-headline font-bold text-primary">Grezzo</span>
           </div>
           <nav className="hidden md:flex items-center gap-2">
@@ -39,6 +40,19 @@ export function Header({ scrollToSection }: HeaderProps) {
               </Button>
             ))}
           </nav>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Notifications</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                No notifications till now.
+              </p>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </header>

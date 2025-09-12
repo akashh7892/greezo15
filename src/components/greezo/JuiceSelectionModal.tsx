@@ -174,23 +174,23 @@ export function JuiceSelectionModal({
 
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row sm:justify-center gap-3">
             <Button 
               size="lg" 
-              className="flex-1"
               onClick={handleConfirm}
               disabled={planType === 'trial' && selectedJuices.length === 0}
             >
-              <Sparkles className="mr-2 h-4 w-4" />
-              {planType === 'trial' 
-                ? <>Add for <span className="font-rupees rupee-symbol">₹9</span></> 
-                : <>Add Juice Pack <span className="font-rupees rupee-symbol">₹499</span></>
-              }
+              <Sparkles />
+              <span>
+                {planType === 'trial'
+                  ? <>Add for <span className="font-rupees rupee-symbol" />9</>
+                  : <>Add Juice Pack <span className="font-rupees rupee-symbol" />499</>
+                }
+              </span>
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              className="flex-1"
               onClick={handleSkip}
             >
               Skip Juice
