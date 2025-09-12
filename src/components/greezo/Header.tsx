@@ -11,6 +11,7 @@ type HeaderProps = {
 
 const navLinks: { name: string; section: keyof SectionRefs }[] = [
   { name: 'Plans', section: 'plans' },
+  { name: 'About Us', section: 'about' },
   { name: 'Contact Us', section: 'contact' },
 ];
 
@@ -24,7 +25,7 @@ export function Header({ scrollToSection }: HeaderProps) {
             onClick={() => scrollToSection('home')}
           >
             <Leaf className="h-7 w-7 text-primary" />
-            <span className="text-xl font-headline font-bold text-primary">GreezoGo</span>
+            <span className="text-xl font-headline font-bold text-primary">Grezzo</span>
           </div>
           <nav className="hidden md:flex items-center gap-2">
             {navLinks.map((link) => (

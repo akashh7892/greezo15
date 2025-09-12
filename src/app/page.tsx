@@ -6,6 +6,7 @@ import type { RefObject } from "react";
 import { Header } from "@/components/greezo/Header";
 import { HomeSection } from "@/components/greezo/HomeSection";
 import { PlansSection } from "@/components/greezo/PlansSection";
+import { AboutSection } from "@/components/greezo/AboutSection";
 import { ContactSection } from "@/components/greezo/ContactSection";
 
 export type SectionRefs = {
@@ -20,6 +21,7 @@ export type SectionRefs = {
 export default function GreezoGoPage() {
   const homeRef = useRef<HTMLDivElement>(null);
   const plansRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
   const sectionRefs: SectionRefs = {
@@ -27,7 +29,7 @@ export default function GreezoGoPage() {
     plans: plansRef,
     contact: contactRef,
     juices: useRef<HTMLDivElement>(null), // Dummy ref
-    about: useRef<HTMLDivElement>(null), // Dummy ref
+    about: aboutRef,
   };
 
   const scrollToSection = (section: keyof SectionRefs) => {
@@ -43,6 +45,9 @@ export default function GreezoGoPage() {
         </div>
         <div ref={plansRef}>
           <PlansSection />
+        </div>
+        <div ref={aboutRef}>
+          <AboutSection />
         </div>
         <div ref={contactRef}>
           <ContactSection />

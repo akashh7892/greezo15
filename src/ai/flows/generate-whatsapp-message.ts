@@ -12,8 +12,19 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateWhatsAppMessageInputSchema = z.object({
+  customerName: z.string().describe('Customer name'),
+  phoneNumber: z.string().describe('Customer phone number'),
   selectedPlan: z.string().describe('The selected meal plan (e.g., Basic Weekly Plan).'),
-  'add Juice': z.boolean().describe('Whether the user wants to add a juice pack.'),
+  planType: z.string().describe('Plan type (trial, weekly, monthly)'),
+  mealType: z.string().describe('Meal preference (Egg or Non-Egg)'),
+  addJuice: z.boolean().describe('Whether the user wants to add a juice pack.'),
+  selectedJuices: z.string().optional().describe('Names of selected juices'),
+  startDate: z.string().describe('Preferred start date'),
+  shift: z.string().describe('Preferred delivery shift'),
+  address: z.string().describe('Delivery address'),
+  totalPrice: z.string().describe('Total order amount'),
+  paymentMethod: z.string().describe('Payment method chosen'),
+  transactionId: z.string().optional().describe('UPI transaction ID if paid online'),
 });
 export type GenerateWhatsAppMessageInput = z.infer<
   typeof GenerateWhatsAppMessageInputSchema
@@ -36,14 +47,26 @@ const prompt = ai.definePrompt({
   name: 'generateWhatsAppMessagePrompt',
   input: {schema: GenerateWhatsAppMessageInputSchema},
   output: {schema: GenerateWhatsAppMessageOutputSchema},
-  prompt: `You are a helpful assistant that generates pre-filled WhatsApp messages for order confirmation.
+  prompt: `You are a helpful assistant that generates comprehensive WhatsApp messages for Greezo meal order confirmations.
 
-  Generate a message based on the following information:
-  Selected Plan: {{{selectedPlan}}}
-  Add Juice: {{#if addJuice}}Yes{{else}}No{{/if}}
+  Generate a detailed message based on the following order information:
+  Customer: {{{customerName}}} ({{{phoneNumber}}})
+  Plan: {{{selectedPlan}}}
+  Type: {{{planType}}} - {{{mealType}}}
+  Juice Add-on: {{#if addJuice}}Yes{{#if selectedJuices}} - {{{selectedJuices}}}{{/if}}{{else}}No{{/if}}
+  Start Date: {{{startDate}}}
+  Delivery Shift: {{{shift}}}
+  Address: {{{address}}}
+  Total Amount: {{{totalPrice}}}
+  Payment: {{{paymentMethod}}}{{#if transactionId}} (Transaction ID: {{{transactionId}}}){{/if}}
   
-  The message should follow this format:
-  "Hello, I would like to order the following Greezo plan: [Selected Plan], Add-On Juice: [Yes/No]. Please contact me."
+  Generate a professional WhatsApp message that includes all these details in a well-formatted way. The message should:
+  1. Start with a greeting to Greezo
+  2. Include complete customer and order details
+  3. Be clear and organized
+  4. End with a request for confirmation
+  
+  Make it look professional but friendly.
   `,
 });
 
@@ -55,8 +78,19 @@ const generateWhatsAppMessageFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt({
-        selectedPlan: input.selectedPlan,
-        addJuice: input['add Juice'],
+      customerName: input.customerName,
+      phoneNumber: input.phoneNumber,
+      selectedPlan: input.selectedPlan,
+      planType: input.planType,
+      mealType: input.mealType,
+      addJuice: input.addJuice,
+      selectedJuices: input.selectedJuices || '',
+      startDate: input.startDate,
+      shift: input.shift,
+      address: input.address,
+      totalPrice: input.totalPrice,
+      paymentMethod: input.paymentMethod,
+      transactionId: input.transactionId || '',
     });
     return output!;
   }

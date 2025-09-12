@@ -7,15 +7,16 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/ui/carousel';
 
-const juiceImages = Array.from({ length: 7 }, (_, i) => ({
-  src: `https://picsum.photos/seed/juice${i + 1}/600/400`,
-  alt: `Fresh juice day ${i + 1}`,
-  hint: 'fresh juice'
-}));
+const juiceImages = [
+  { src: "/images/juices/lime-chia.png", alt: "Lime Chia Juice - Refreshing lime with chia seeds", hint: "lime chia juice", name: "Lime Chia Juice" },
+  { src: "/images/juices/amla-juice.png", alt: "Amla Juice - Fresh vitamin C rich juice", hint: "amla juice", name: "Amla Juice" },
+  { src: "/images/juices/brain-booster.png", alt: "Brain Booster - Green nutrient juice", hint: "brain booster juice", name: "Brain Booster" },
+  { src: "/images/juices/ginger-lime.png", alt: "Ginger Lime - Refreshing citrus blend", hint: "ginger lime juice", name: "Ginger Lime" },
+  { src: "/images/juices/kokum.png", alt: "Kokum Juice - Traditional cooling drink", hint: "kokum juice", name: "Kokum Juice" },
+  { src: "/images/juices/lime-chia.png", alt: "Lime Chia - Refreshing drink with chia seeds", hint: "lime chia drink", name: "Lime Chia" },
+];
 
 export function JuicesSection() {
   return (
@@ -40,14 +41,15 @@ export function JuicesSection() {
                         height={400}
                         className="object-cover aspect-[3/2] w-full"
                       />
+                      <div className="p-3">
+                        <h3 className="text-lg font-semibold text-center text-primary">{juice.name}</h3>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
         </Carousel>
       </div>
     </section>
