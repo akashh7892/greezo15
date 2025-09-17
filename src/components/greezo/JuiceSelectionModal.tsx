@@ -23,28 +23,28 @@ const ALL_JUICES = [
   },
   {
     name: "Amla Juice", 
-    image: "/juice_images/alma juice .png",
+    image: "/images/juices/amla-juice.png",
     description: "Rich in Vitamin C"
   },
   {
     name: "Brain Booster",
-    image: "/juice_images/brain boster.png", 
-    description: "Blueberry & nuts blend"
+    image: "/images/juices/brain-booster.png",
+    description: "Ondelaga and Honey blend"
   },
   {
     name: "Ginger Lime",
-    image: "/juice_images/gingerLime.png",
-    description: "Refreshing ginger & lime"
+    image: "/images/juices/ginger-lime.png",
+    description: "Refreshing citrus blend"
   },
   {
     name: "Kokum Juice",
-    image: "/juice_images/kokum.png",
+    image: "/images/juices/kokum.png",
     description: "Traditional kokum drink"
   },
   {
-    name: "Lime Chia",
-    image: "/juice_images/lime and chia .png",
-    description: "Lime with chia seeds"
+    name: "ABC Juice",
+    image: "/images/juices/abc-juice.png",
+    description: "Apple, Beetroot & Carrot blend"
   }
 ];
 
@@ -58,8 +58,6 @@ export function JuiceSelectionModal({
   juicePrice = 9
 }: JuiceSelectionModalProps) {
   const [selectedJuices, setSelectedJuices] = useState<string[]>([]);
-  const [showSelection, setShowSelection] = useState(true);
-
   const getJuicesToShow = () => {
     return planType === 'trial' ? TRIAL_JUICES : ALL_JUICES;
   };
@@ -92,9 +90,7 @@ export function JuiceSelectionModal({
 
   const resetState = () => {
     setSelectedJuices([]);
-    setShowSelection(true);
   };
-
   if (!isOpen) return null;
 
   return (
@@ -110,33 +106,25 @@ export function JuiceSelectionModal({
           {/* Price Display */}
           <div className="text-center">
             <p className="text-xl font-bold text-primary mb-2">
-              <span className="font-rupees rupee-symbol">{planType === 'trial' ? '+₹9' : '+₹499'}</span>
+              <span className="font-rupees rupee-symbol">+₹{juicePrice}</span>
             </p>
             <p className="text-sm text-muted-foreground">
               {planType === 'trial' 
                 ? 'Select your favorite juice for trial (choose 1)' 
-                : 'Enjoy fresh juice variety with your subscription'
+                : 'Add a pack of assorted fresh juices to your subscription.'
               }
             </p>
           </div>
 
           {/* Juice Selection Grid */}
-          <div className={`grid gap-4 ${
-            planType === 'trial' 
-              ? 'grid-cols-1 sm:grid-cols-3' 
-              : 'grid-cols-2 sm:grid-cols-3'
-          }`}>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {getJuicesToShow().map((juice, index) => (
               <Card 
                 key={index}
                 className={`transition-all duration-200 ${
-                  planType === 'trial'
-                    ? `cursor-pointer hover:shadow-lg ${
-                        selectedJuices.includes(juice.name) 
-                          ? 'ring-2 ring-primary bg-primary/5' 
-                          : 'hover:shadow-md'
-                      }`
-                    : 'hover:shadow-md' // Subscription: just subtle hover effect, no selection styling
+                  planType === 'trial' 
+                    ? `cursor-pointer hover:shadow-lg ${selectedJuices.includes(juice.name) ? 'ring-2 ring-primary bg-primary/5' : 'hover:shadow-md'}`
+                    : 'cursor-default'
                 }`}
                 onClick={planType === 'trial' ? () => handleJuiceToggle(juice.name) : undefined}
               >
@@ -183,8 +171,8 @@ export function JuiceSelectionModal({
               <Sparkles />
               <span>
                 {planType === 'trial'
-                  ? <>Add for <span className="font-rupees rupee-symbol" />9</>
-                  : <>Add Juice Pack <span className="font-rupees rupee-symbol" />499</>
+                  ? <>Add for <span className="font-rupees rupee-symbol" />{juicePrice}</>
+                  : <>Add Juice Pack <span className="font-rupees rupee-symbol" />{juicePrice}</>
                 }
               </span>
             </Button>

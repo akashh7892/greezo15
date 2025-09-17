@@ -26,7 +26,7 @@ export function Header({ scrollToSection }: HeaderProps) {
             className="flex items-center gap-2 cursor-pointer group"
             onClick={() => scrollToSection('home')}
           >
-            <span className="text-xl font-headline font-bold text-primary">Grezzo</span>
+            <span className="text-xl font-headline font-bold text-primary">Greezo</span>
           </div>
           <nav className="hidden md:flex items-center gap-2">
             {navLinks.map((link) => (

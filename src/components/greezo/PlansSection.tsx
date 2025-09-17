@@ -26,7 +26,7 @@ type Plan = {
 const plans: Plan[] = [
   { id: 'w-basic', name: 'Basic Weekly Plan', price: 729, originalPrice: 999, type: 'weekly' },
   { id: 'w-pro', name: 'Pro Weekly Plan', price: 1399, originalPrice: 1999, type: 'weekly', isComingSoon: true },
-  { id: 'm-basic', name: 'Basic Monthly Plan', price: 2999, originalPrice: 3999, type: 'monthly' },
+  { id: 'm-basic', name: 'Basic Monthly Plan', price: 2999, originalPrice: 4000, type: 'monthly' },
   { id: 'm-pro', name: 'Pro Monthly Plan', price: 4499, originalPrice: 5999, type: 'monthly', isComingSoon: true },
 ];
 
@@ -127,10 +127,11 @@ export function PlansSection() {
   const handleJuiceSelectionFromModal = (selected: boolean, juices?: string[]) => {
     setShowJuiceSelectionModal(false);
     if (selectedPlan) {
+      const juicePrice = selectedPlan.type === 'weekly' ? 399 : 1599;
       setCheckoutPlanInfo({
         name: selectedPlan.name,
         price: selectedPlan.price,
-        juicePrice: 499,
+        juicePrice: juicePrice,
         juiceAdded: selected,
         selectedJuices: juices || [],
         type: 'subscription',
@@ -246,7 +247,7 @@ export function PlansSection() {
         onClose={() => setShowJuiceSelectionModal(false)}
         onSelect={handleJuiceSelectionFromModal}
         planType="subscription"
-        juicePrice={499}
+        juicePrice={selectedPlan?.type === 'weekly' ? 399 : 1599}
       />
       <CheckoutDialog
         isOpen={showCheckoutDialog}

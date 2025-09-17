@@ -2,6 +2,9 @@
 "use client";
 import { Button } from '@/components/ui/button';
 
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "greezoofficial@gmail.com";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919449614641";
+
 export function ContactSection() {
   return (
     <section id="contact" className="py-16 sm:py-24">
@@ -11,12 +14,12 @@ export function ContactSection() {
           <p className="mb-2">
             For support, reach out to us via email:
           </p>
-          <a href="mailto:greezoofficial@gmail.com" className="font-semibold text-primary hover:underline text-xl">greezoofficial@gmail.com</a>
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-primary hover:underline text-xl">{CONTACT_EMAIL}</a>
           <p className="mt-6 mb-2">
             Or get in touch with us directly on WhatsApp:
           </p>
           <Button asChild size="lg">
-            <a href="https://wa.me/919449614641" target="_blank" rel="noopener noreferrer">Contact on WhatsApp (+91 9449614641)</a>
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer">Contact on WhatsApp (+91 {WHATSAPP_NUMBER})</a>
           </Button>
         </div>
       </div>

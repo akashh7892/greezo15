@@ -12,10 +12,10 @@ import {
 const juiceImages = [
   { src: "/images/juices/lime-chia.png", alt: "Lime Chia Juice - Refreshing lime with chia seeds", hint: "lime chia juice", name: "Lime Chia Juice" },
   { src: "/images/juices/amla-juice.png", alt: "Amla Juice - Fresh vitamin C rich juice", hint: "amla juice", name: "Amla Juice" },
-  { src: "/images/juices/brain-booster.png", alt: "Brain Booster - Green nutrient juice", hint: "brain booster juice", name: "Brain Booster" },
+  { src: "/images/juices/brain-booster.png", alt: "Brain Booster - Ondelaga and Honey blend", hint: "brain booster juice", name: "Brain Booster" },
   { src: "/images/juices/ginger-lime.png", alt: "Ginger Lime - Refreshing citrus blend", hint: "ginger lime juice", name: "Ginger Lime" },
   { src: "/images/juices/kokum.png", alt: "Kokum Juice - Traditional cooling drink", hint: "kokum juice", name: "Kokum Juice" },
-  { src: "/images/juices/lime-chia.png", alt: "Lime Chia - Refreshing drink with chia seeds", hint: "lime chia drink", name: "Lime Chia" },
+  { src: "/images/juices/abc-juice.png", alt: "ABC Juice - Apple, Beetroot, and Carrot blend", hint: "abc juice", name: "ABC Juice" },
 ];
 
 export function JuicesSection() {

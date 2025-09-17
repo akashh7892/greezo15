@@ -1,27 +1,28 @@
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { CheckCircle, XCircle, Calendar as CalendarIcon, Loader2, MapPin } from 'lucide-react';
-import { format } from 'date-fns';
-import { TIME_SLOTS, isSlotAvailable, getSlotRestrictionMessage } from '@/lib/constants';
-import { AddressModal, type Address } from './AddressModal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useToast } from '@/hooks/use-toast';
 
-export type CheckoutPlanInfo = {
+export interface CheckoutPlanInfo {
   name: string;
   price: number;
   juicePrice: number;
   juiceAdded: boolean;
   selectedJuices: string[];
-  type: 'trial' | 'subscription';
+  type: 'subscription' | 'trial';
   hasEgg: boolean;
-};
+}
 
 interface CheckoutDialogProps {
   isOpen: boolean;
@@ -29,463 +30,290 @@ interface CheckoutDialogProps {
   planInfo: CheckoutPlanInfo | null;
 }
 
+const disabledDays = (date: Date) => {
+    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Disable past dates
+    if (date < today) {
+        return true;
+    }
+
+    // If it's after 12 PM, disable today
+    if (now.getHours() >= 12 && date.getTime() === today.getTime()) {
+        return true;
+    }
+
+    return false;
+};
+
+const locations = [
+  "Brookefield - Whitefield",
+  "Munnekollal - Marathahalli",
+  "Kadubeesanahalli - Marathahalli",
+  "Aswath Nagar - Marathahalli",
+  "Sanjay Nagar - Marathahalli",
+  "Doddenakundi - Marathahalli",
+  "Panathur - Marathahalli",
+  "Kartik Nagar - Marathahalli",
+  "EPIP Zone - Whitefield",
+  "Kundalahalli - Whitefield",
+  "Varthur - Whitefield",
+  "Hope Farm Junction - Whitefield",
+  "Nagondanahalli - Whitefield",
+];
+
 export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProps) {
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedShift, setSelectedShift] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'upi'>('cod');
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const [showAddressModal, setShowAddressModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'cod' | null>(null);
-  const [transactionId, setTransactionId] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [fieldErrors, setFieldErrors] = useState({
-    customerName: false,
-    phoneNumber: false,
-    selectedDate: false,
-    selectedShift: false,
-    selectedAddress: false,
-    transactionId: false
-  });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [preferredShift, setPreferredShift] = useState('');
+  const [nearbyLocation, setNearbyLocation] = useState('');
+  const [address, setAddress] = useState('');
+  const [errors, setErrors] = useState<Partial<Record<'customerName' | 'phoneNumber' | 'selectedDate' | 'preferredShift' | 'address' | 'nearbyLocation', string>>>({});
+  const { toast } = useToast();
+
+  const availableShifts = useMemo(() => {
+    if (!selectedDate) return [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selDate = new Date(selectedDate);
+    selDate.setHours(0, 0, 0, 0);
+
+    const isToday = selDate.getTime() === today.getTime();
+    const currentHour = new Date().getHours();
+
+    // If it's today AND before noon, only show evening shifts for today.
+    if (isToday && currentHour < 12) {
+      return ['6-7 PM', '7-8 PM', '8-9 PM'];
+    }
+    
+    // Otherwise (if it's today after noon, or any future day), show all shifts.
+    return ['6-7 AM', '7-8 AM', '8-9 AM', '9-10 AM', '6-7 PM', '7-8 PM', '8-9 PM'];
+  }, [selectedDate]);
 
   useEffect(() => {
-    if (!isOpen) {
-      // Reset form when dialog closes
-      setSelectedDate(undefined);
-      setSelectedShift('');
+    if (isOpen) {
+      const now = new Date();
+      const isBeforeNoon = now.getHours() < 12;
+      // Today if before noon, otherwise tomorrow
+      const initialDate = isBeforeNoon ? now : new Date(new Date().setDate(now.getDate() + 1));
+      setSelectedDate(initialDate);
+    } else {
+      // Reset form on close
       setCustomerName('');
       setPhoneNumber('');
-      setSelectedAddress(null);
-      setPaymentMethod(null);
-      setTransactionId('');
-      setIsLoading(false);
-      setError('');
-      setFieldErrors({
-        customerName: false,
-        phoneNumber: false,
-        selectedDate: false,
-        selectedShift: false,
-        selectedAddress: false,
-        transactionId: false
-      });
+      setPreferredShift('');
+      setAddress('');
+      setNearbyLocation('');
+      setErrors({});
+      setPaymentMethod('cod');
+      setSelectedDate(undefined);
     }
   }, [isOpen]);
-
-  const validateTransactionId = (id: string): boolean => {
-    const trimmedId = id.trim();
-    if (!trimmedId) return false;
-    if (trimmedId.length < 8) return false;
-    if (trimmedId.length > 50) return false;
-    if (!/^[A-Za-z0-9\-_]+$/.test(trimmedId)) return false;
-    return true;
-  };
-
-  const isFormValid = useMemo(() => {
-    if (!planInfo) return false;
-    const isBasicValid = customerName.trim() &&
-                        phoneNumber.trim() &&
-                        /^[6-9]\d{9}$/.test(phoneNumber.trim()) &&
-                        selectedDate &&
-                        selectedShift &&
-                        selectedAddress;
-
-    if (planInfo.type === 'subscription' || paymentMethod === 'upi') {
-      return isBasicValid && validateTransactionId(transactionId);
-    }
-    if (planInfo.type === 'trial' && paymentMethod === 'cod') {
-      return isBasicValid;
-    }
-    return false;
-  }, [customerName, phoneNumber, selectedDate, selectedShift, selectedAddress, paymentMethod, transactionId, planInfo]);
-
-  const validateForm = (skipTransactionIdCheck = false) => {
-    if (!planInfo) return false;
-    const errors = {
-      customerName: !customerName.trim(),
-      phoneNumber: !phoneNumber.trim() || !/^[6-9]\d{9}$/.test(phoneNumber.trim()),
-      selectedDate: !selectedDate,
-      selectedShift: !selectedShift,
-      selectedAddress: !selectedAddress,
-      transactionId: (planInfo.type === 'subscription' || paymentMethod === 'upi') && !skipTransactionIdCheck ? !validateTransactionId(transactionId) : false
-    };
-
-    setFieldErrors(errors);
-
-    if (errors.customerName) { setError('Please enter your name'); return false; }
-    if (!phoneNumber.trim()) { setError('Please enter your phone number'); return false; }
-    if (!/^[6-9]\d{9}$/.test(phoneNumber.trim())) { setError('Please enter a valid 10-digit phone number'); return false; }
-    if (errors.selectedDate) { setError('Please select a start date'); return false; }
-    if (errors.selectedShift) { setError('Please select a preferred shift'); return false; }
-    if (errors.selectedAddress) { setError('Please add your delivery address'); return false; }
-    if (errors.transactionId) { setError('Please enter a valid transaction ID for UPI payment'); return false; }
-    
-    setError('');
-    return true;
-  };
-
-  const handleAddressSelect = (address: Address) => {
-    setSelectedAddress(address);
-    setShowAddressModal(false);
-    if (fieldErrors.selectedAddress) {
-      setFieldErrors(prev => ({ ...prev, selectedAddress: false }));
-    }
-  };
-
-  const handlePaymentMethodSelect = (method: 'upi' | 'cod') => {
-    const isValid = validateForm(true); // Skip transaction ID check for now
-    if (isValid) {
-      setPaymentMethod(method);
-      setError('');
-    }
-  };
-
-  const handleInitiateUpiPayment = (skipTransactionIdCheck = false) => {
-    if (!planInfo) return;
-    if (!validateForm(skipTransactionIdCheck)) return;
-    const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0);
-    const upiLink = `upi://pay?pa=akashpg911@ibl&pn=Akash&am=${totalPrice}&cu=INR&tn=Payment${totalPrice}`;
-    window.location.href = upiLink;
-  };
-
-  const openWhatsApp = (orderData: any) => {
-    const businessNumber = "919449614641";
-    const message = `
-      New Greezo Order Confirmation:
-      ---------------------------------
-      Name: ${orderData.customerName}
-      Phone: ${orderData.phoneNumber}
-      Plan: ${orderData.plan}
-      Type: ${orderData.type}
-      Juice Pack: ${orderData.juicePack}
-      ${orderData.juicePack === 'Yes' ? `Selected Juice(s): ${orderData.selectedJuices}` : ''}
-      Start Date: ${orderData.startDate}
-      Shift: ${orderData.shift}
-      Address: ${orderData.address}
-      Total Price: ${orderData.price}
-      Payment Method: ${orderData.paymentMethod}
-      Transaction ID: ${orderData.transactionId || 'N/A (COD)'}
-    `.trim().replace(/\s+/g, ' ');
-    const whatsappUrl = `https://wa.me/${businessNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
-  const handleConfirmOrder = async () => {
-    if (!planInfo || !validateForm()) return;
-    if (planInfo.type === 'trial' && !paymentMethod) {
-      setError('Please select a payment method');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0);
-      const finalPaymentMethod = planInfo.type === 'subscription' ? 'UPI Payment' : (paymentMethod === 'cod' ? 'Cash on Delivery' : 'UPI Payment');
-
-      const orderData = {
-        customerName: customerName.trim(),
-        phoneNumber: phoneNumber.trim(),
-        plan: planInfo.name,
-        type: planInfo.hasEgg ? 'Egg' : 'Non-Egg',
-        juicePack: planInfo.juiceAdded ? 'Yes' : 'No',
-        selectedJuices: planInfo.selectedJuices.join(', ') || 'None',
-        startDate: selectedDate ? format(selectedDate, 'PPP') : 'ASAP',
-        shift: selectedShift || 'Any time',
-        address: selectedAddress?.formatted_address || '',
-        price: `₹${totalPrice}`,
-        paymentMethod: finalPaymentMethod,
-        ...(finalPaymentMethod === 'UPI Payment' && { transactionId: transactionId.trim() })
-      };
-
-      console.log('Order data that would be saved:', orderData);
-      openWhatsApp(orderData);
-      onClose();
-
-    } catch (error) {
-      console.error('Error processing order:', error);
-      setError(error instanceof Error ? error.message : 'Failed to process order');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (!planInfo) return null;
 
   const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0);
+  const planNameWithEgg = `${planInfo.name} (${planInfo.hasEgg ? 'Egg' : 'Veg'})`;
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+    if (!customerName.trim()) newErrors.customerName = 'Name is required';
+    if (!/^\d{10}$/.test(phoneNumber)) newErrors.phoneNumber = 'Please enter a valid 10-digit phone number';
+    if (!selectedDate) newErrors.selectedDate = 'Start date is required';
+    if (!preferredShift) newErrors.preferredShift = 'Please select a shift';
+    if (!nearbyLocation) newErrors.nearbyLocation = 'Nearby Location is required';
+    if (!address.trim()) newErrors.address = 'Address is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleConfirmOrder = () => {
+    if (paymentMethod === 'upi') return; // Button is disabled, but for safety
+
+    if (!validateForm()) {
+      toast({
+        title: "Incomplete Form",
+        description: "Please fill in all required fields correctly.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const message = `
+*New Greezo Order Confirmation*
+-----------------------------------
+*Name:* ${customerName}
+*Phone:* ${phoneNumber}
+*Start Date:* ${selectedDate ? format(selectedDate, 'PPP') : 'N/A'}
+*Preferred Shift:* ${preferredShift}
+*Plan:* ${planNameWithEgg}
+*Juice Pack:* ${planInfo.juiceAdded ? 'Yes' : 'No'}
+*Total Price:* ₹${totalPrice}
+*Nearby Location:* ${nearbyLocation}
+*Address:* ${address}
+*Payment Type:* Cash On Delivery
+-----------------------------------
+`.trim();
+
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919449614641';
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Checkout</DialogTitle>
+          <DialogTitle className="text-2xl">Confirm Your Order</DialogTitle>
+          <DialogDescription>Review your plan and choose a payment method.</DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-6">
-          {/* Customer Details */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="customerName">Your Name *</Label>
-              <Input
-                id="customerName"
-                name="customerName"
-                type="text"
-                placeholder="Enter your full name"
-                value={customerName}
-                onChange={(e) => {
-                  setCustomerName(e.target.value);
-                  if (fieldErrors.customerName && e.target.value.trim()) {
-                    setFieldErrors(prev => ({ ...prev, customerName: false }));
-                  }
-                }}
-                className={`w-full ${fieldErrors.customerName ? 'border-red-500 focus:border-red-500' : ''}`}
-                autoComplete="name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number *</Label>
-              <Input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                placeholder="Enter 10-digit mobile number"
-                value={phoneNumber}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-                  setPhoneNumber(value);
-                  if (fieldErrors.phoneNumber && value.trim() && /^[6-9]\d{9}$/.test(value)) {
-                    setFieldErrors(prev => ({ ...prev, phoneNumber: false }));
-                  }
-                }}
-                className={`w-full ${fieldErrors.phoneNumber ? 'border-red-500 focus:border-red-500' : ''}`}
-                autoComplete="tel"
-              />
-            </div>
-          </div>
 
-          {/* Date and Shift Selection */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Start Date *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={`w-full justify-start text-left font-normal ${fieldErrors.selectedDate ? 'border-red-500 hover:border-red-500' : ''}`}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDate ? format(selectedDate, "MMM dd, yy") : "Select date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(date) => {
-                      setSelectedDate(date);
-                      if (fieldErrors.selectedDate && date) {
-                        setFieldErrors(prev => ({ ...prev, selectedDate: false }));
-                      }
-                    }}
-                    disabled={(date) => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      return date < today;
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+        {/* Plan Info */}
+        <div className="my-4 p-4 bg-muted/50 rounded-lg border">
+            <h3 className="font-semibold text-lg mb-2">{planNameWithEgg}</h3>
+            <div className="flex justify-between text-sm">
+                <span>Base Plan</span>
+                <span className="font-rupees rupee-symbol">₹{planInfo.price}</span>
             </div>
-            
-            <div className="space-y-2">
-              <Label>Preferred Shift *</Label>
-              <Select 
-                value={selectedShift} 
-                onValueChange={(value) => {
-                  setSelectedShift(value);
-                  if (fieldErrors.selectedShift && value) {
-                    setFieldErrors(prev => ({ ...prev, selectedShift: false }));
-                  }
-                }}
-              >
-                <SelectTrigger className={`w-full ${fieldErrors.selectedShift ? 'border-red-500' : ''}`}>
-                  <SelectValue placeholder="Select shift" />
-                </SelectTrigger>
-                <SelectContent>
-                  <div className="px-2 py-1 text-sm font-semibold text-muted-foreground">Morning</div>
-                  {TIME_SLOTS.MORNING.map((slot) => {
-                    const isAvailable = isSlotAvailable(selectedDate, slot.value);
-                    const restrictionMessage = getSlotRestrictionMessage(selectedDate, slot.value);
-                    return (
-                      <SelectItem 
-                        key={slot.value} 
-                        value={slot.value}
-                        disabled={!isAvailable}
-                        className={!isAvailable ? 'opacity-50 cursor-not-allowed' : ''}
-                        title={restrictionMessage || undefined}
-                      >
-                        {slot.label}
-                      </SelectItem>
-                    );
-                  })}
-                  <div className="px-2 py-1 text-sm font-semibold text-muted-foreground border-t mt-1 pt-2">Evening</div>
-                  {TIME_SLOTS.EVENING.map((slot) => {
-                    const isAvailable = isSlotAvailable(selectedDate, slot.value);
-                    const restrictionMessage = getSlotRestrictionMessage(selectedDate, slot.value);
-                    return (
-                      <SelectItem 
-                        key={slot.value} 
-                        value={slot.value}
-                        disabled={!isAvailable}
-                        className={!isAvailable ? 'opacity-50 cursor-not-allowed' : ''}
-                        title={restrictionMessage || undefined}
-                      >
-                        {slot.label}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="bg-card p-4 rounded-lg space-y-3 border">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-muted-foreground">Plan:</span>
-              <span className="font-bold">{planInfo.name} ({planInfo.hasEgg ? 'Egg' : 'Veg'})</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-muted-foreground">Juice Pack:</span>
-              <div className="flex items-center gap-2 font-bold">
-                {planInfo.juiceAdded ? <CheckCircle className="text-green-500 h-4 w-4"/> : <XCircle className="text-red-500 h-4 w-4"/>}
-                <span>{planInfo.juiceAdded ? 'Yes' : 'No'}</span>
-              </div>
-            </div>
-            {planInfo.juiceAdded && planInfo.selectedJuices.length > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-muted-foreground">Selected Juice(s):</span>
-                <span className="font-bold text-sm">{planInfo.selectedJuices.join(', ')}</span>
-              </div>
-            )}
-            {selectedAddress && (
-              <div className="flex justify-between items-start">
-                <span className="font-semibold text-muted-foreground">Address:</span>
-                <span className="font-bold text-sm text-right">{selectedAddress.formatted_address}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-center pt-2 border-t">
-              <span className="font-semibold text-muted-foreground">Total Price:</span>
-              <span className="text-xl font-bold text-black font-rupees rupee-symbol">₹{totalPrice.toLocaleString()}</span>
-            </div>
-          </div>
-
-          {/* Add Address Button */}
-          <div className="mb-4">
-            <Button 
-              variant="outline" 
-              className={`w-full ${fieldErrors.selectedAddress ? 'border-red-500 hover:border-red-500' : ''}`}
-              onClick={() => setShowAddressModal(true)}
-            >
-              <MapPin className="mr-2 h-4 w-4" />
-              {selectedAddress ? 'Change Address' : 'Add Address'}
-            </Button>
-          </div>
-
-          {/* Error Display */}
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Payment Section */}
-          {planInfo.type === 'trial' ? (
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Payment Method *</Label>
-              <Button 
-                size="lg" 
-                className="w-full"
-                variant={paymentMethod === 'upi' ? 'default' : 'outline'}
-                onClick={() => handlePaymentMethodSelect('upi')}
-                disabled={isLoading}
-              >
-                Pay Now (UPI)
-              </Button>
-              <div className="text-center"><span className="text-sm text-muted-foreground">or</span></div>
-              <Button 
-                size="lg" 
-                className="w-full"
-                variant={paymentMethod === 'cod' ? 'default' : 'outline'}
-                onClick={() => handlePaymentMethodSelect('cod')}
-                disabled={isLoading}
-              >
-                Cash on Delivery
-              </Button>
-            </div>
-          ) : null}
-
-          {/* Transaction ID Field - Only for UPI */}
-          {(planInfo.type === 'subscription' || paymentMethod === 'upi') && (
-            <div className="space-y-4 animate-in fade-in-0">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex flex-col gap-3 text-center">
-                  <p className="text-sm text-blue-700">1. Click the button below to pay via your UPI app.</p>
-                  <Button
-                    size="sm"
-                    className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => handleInitiateUpiPayment(true)}
-                    disabled={isLoading}
-                  >
-                    Pay ₹{totalPrice} via UPI
-                  </Button>
-                  <p className="text-sm text-blue-700">2. After paying, enter the Transaction ID below to confirm.</p>
+            {planInfo.juiceAdded && (
+                <div className="flex justify-between text-sm">
+                    <span>Juice Pack</span>
+                    <span className="font-rupees rupee-symbol">₹{planInfo.juicePrice}</span>
                 </div>
+            )}
+            <div className="border-t my-2"></div>
+            <div className="flex justify-between font-bold text-md">
+                <span>Total Price</span>
+                <span className="font-rupees rupee-symbol">₹{totalPrice}</span>
+            </div>
+        </div>
+
+        {/* Payment Method Selection */}
+        <div className="space-y-4">
+          <Label className="text-md font-semibold">Select Payment Method</Label>
+          <RadioGroup defaultValue="cod" value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'cod' | 'upi')}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="cod" id="cod" />
+              <Label htmlFor="cod">Cash On Delivery (COD)</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="upi" id="upi" />
+              <Label htmlFor="upi">UPI Payment</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {paymentMethod === 'upi' && (
+          <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded-r-lg animate-in fade-in-50">
+            <h4 className="font-bold">Pay via UPI (Currently Unavailable)</h4>
+            <p className="text-sm mt-1">
+              Due to a high volume of orders and recent UPI security restrictions, we’re temporarily disabling UPI payments to ensure smooth service for all our customers.
+              We appreciate your understanding and recommend you select Cash On Delivery for now.
+            </p>
+          </div>
+        )}
+
+        {paymentMethod === 'cod' && (
+          <div className="mt-6 space-y-4 animate-in fade-in-50">
+            <h3 className="font-semibold text-lg border-t pt-4">Delivery Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">Customer Name</Label>
+                <Input id="name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Your Name" />
+                {errors.customerName && <p className="text-red-500 text-xs mt-1">{errors.customerName}</p>}
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="transactionId">UPI Transaction ID *</Label>
-                <Input
-                  id="transactionId"
-                  type="text"
-                  placeholder="Enter transaction ID"
-                  value={transactionId}
-                  onChange={(e) => {
-                    setTransactionId(e.target.value);
-                    if (fieldErrors.transactionId && validateTransactionId(e.target.value)) {
-                      setFieldErrors(prev => ({ ...prev, transactionId: false }));
-                    }
-                  }}
-                  className={`w-full ${fieldErrors.transactionId ? 'border-red-500 focus:border-red-500' : ''}`}
-                  disabled={isLoading}
-                />
+              <div>
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input id="phone" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="10-digit number" />
+                {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
               </div>
             </div>
-          )}
-          
-          {/* Process Order Button */}
-          {(planInfo.type === 'subscription' || paymentMethod) && (
-            <Button 
-              size="lg" 
-              className="w-full bg-green-600 hover:bg-green-700" 
-              onClick={handleConfirmOrder}
-              disabled={isLoading || !isFormValid}
-            >
-              {isLoading ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Processing...</>
-              ) : (
-                `Confirm Order`
-              )}
-            </Button>
-          )}
-        </div>
-        <AddressModal
-          isOpen={showAddressModal}
-          onClose={() => setShowAddressModal(false)}
-          onAddressSelect={handleAddressSelect}
-        />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="start-date">Start Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      id="start-date"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !selectedDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => {
+                        setSelectedDate(date);
+                        setPreferredShift(''); // Reset shift when date changes
+                      }}
+                      disabled={disabledDays}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {planInfo.type === 'trial' && (<p className="text-xs text-muted-foreground mt-1.5 px-1">
+                    Order before 12 PM for today's evening shift, or for tomorrow.
+                </p>)}
+                {errors.selectedDate && <p className="text-red-500 text-xs mt-1">{errors.selectedDate}</p>}
+              </div>
+              <div>
+                  <Label htmlFor="shift">Preferred Shift</Label>
+                  <Select onValueChange={setPreferredShift} value={preferredShift} disabled={!selectedDate}>
+                      <SelectTrigger id="shift">
+                          <SelectValue placeholder="Select a time slot" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {availableShifts.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                      </SelectContent>
+                  </Select>
+                  {errors.preferredShift && <p className="text-red-500 text-xs mt-1">{errors.preferredShift}</p>}
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="location">Nearby Location</Label>
+                <Select onValueChange={setNearbyLocation} value={nearbyLocation}>
+                    <SelectTrigger id="location">
+                        <SelectValue placeholder="Select your nearby location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {locations.map(loc => <SelectItem key={loc} value={loc}>{loc}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+              {errors.nearbyLocation && <p className="text-red-500 text-xs mt-1">{errors.nearbyLocation}</p>}
+            </div>
+            <div>
+              <Label htmlFor="address">Full Address</Label>
+              <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="House No, Street, Landmark..." />
+              {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
+            </div>
+          </div>
+        )}
+
+        <DialogFooter className="mt-6">
+          <Button 
+            type="button" 
+            size="lg" 
+            className="w-full" 
+            onClick={handleConfirmOrder}
+            disabled={paymentMethod === 'upi'}
+          >
+            {paymentMethod === 'cod' ? 'Confirm Order' : 'Proceed to Order'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
