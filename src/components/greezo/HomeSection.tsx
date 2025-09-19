@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,16 +21,17 @@ type HomeSectionProps = {
 };
 
 const sliderImages = [
+  { src: "/images/splash/offer.png", alt: "Limited offer - Sprouts salad ₹69 plus lime mint juice ₹9", hint: "special offer promotion" },
   { src: "/images/splash/delivery-new.jpg", alt: "Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
   { src: "/images/splash/packaging.png", alt: "Plastic free package - Eco-friendly bagasse trays", hint: "eco-friendly packaging" },
-  { src: "/images/splash/offer.png", alt: "Limited offer - Sprouts salad ₹69 plus lime mint juice ₹9", hint: "special offer promotion" },
 ];
 
 export function HomeSection({ onScrollToPlans }: HomeSectionProps) {
   const [showJuiceSelection, setShowJuiceSelection] = useState(false);
-  const [hasEgg, setHasEgg] = useState(false); // Trial meal preference
+  const [hasEgg, setHasEgg] = useState(true); // Trial meal preference
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
   const [checkoutPlanInfo, setCheckoutPlanInfo] = useState<CheckoutPlanInfo | null>(null);
+  const trialSectionRef = useRef<HTMLDivElement>(null);
 
   const handleOrderNow = () => {
     setShowJuiceSelection(true);
@@ -48,6 +49,10 @@ export function HomeSection({ onScrollToPlans }: HomeSectionProps) {
       hasEgg,
     });
     setShowCheckoutDialog(true);
+  };
+
+  const handleScrollToTrial = () => {
+    trialSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
@@ -81,19 +86,28 @@ export function HomeSection({ onScrollToPlans }: HomeSectionProps) {
               <CarouselContent>
                 {sliderImages.map((image, index) => (
                   <CarouselItem key={index}>
-                    <Card>
-                      <CardContent className="p-0">
-                        <Image
-                          src={image.src}
-                          alt={image.alt}
-                          data-ai-hint={image.hint}
-                          width={1200}
-                          height={800}
-                          className="rounded-lg object-cover aspect-video"
-                          priority={index === 0}
-                        />
-                      </CardContent>
-                    </Card>
+                    <div
+                      className="cursor-pointer group focus:outline-none"
+                      onClick={handleScrollToTrial}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleScrollToTrial()}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="View trial offer"
+                    >
+                      <Card className="overflow-hidden group-focus:ring-2 group-focus:ring-primary group-focus:ring-offset-2">
+                        <CardContent className="p-0">
+                          <Image
+                            src={image.src}
+                            alt={image.alt}
+                            data-ai-hint={image.hint}
+                            width={1200}
+                            height={800}
+                            className="rounded-lg object-cover aspect-video"
+                            priority={index === 0}
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -102,7 +116,7 @@ export function HomeSection({ onScrollToPlans }: HomeSectionProps) {
         </div>
         
         {/* Trial Product Section */}
-        <div className="mt-16 text-center">
+        <div ref={trialSectionRef} className="mt-16 text-center !scroll-smooth" style={{scrollMarginTop: '100px'}}>
           <div className="max-w-md mx-auto">
             {/* Egg/Non-Egg Toggle for Trial */}
             <div className="flex items-center justify-center space-x-3 mb-6">
@@ -121,9 +135,9 @@ export function HomeSection({ onScrollToPlans }: HomeSectionProps) {
               </Label>
             </div>
             <Card className="shadow-xl border-2 border-primary/20 relative overflow-visible">
-              {/* Welcome Offer Tab */}
-              <div className="absolute -top-0 left-4 bg-red-600 text-white px-4 py-2 text-sm font-bold transform -rotate-12 shadow-lg z-10" style={{clipPath: 'polygon(0% 0%, 90% 0%, 100% 100%, 10% 100%)'}}>
-                Welcome Offer
+              {/* Exclusive Offer Badge */}
+              <div className="absolute -top-0 left-4 bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 text-sm font-bold transform -rotate-12 shadow-lg z-10" style={{clipPath: 'polygon(0% 0%, 90% 0%, 100% 100%, 10% 100%)'}}>
+                Exclusive Offer
               </div>
               <CardContent className="p-6">
                 <Image

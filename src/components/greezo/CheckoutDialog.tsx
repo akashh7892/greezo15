@@ -30,38 +30,20 @@ interface CheckoutDialogProps {
   planInfo: CheckoutPlanInfo | null;
 }
 
-const disabledDays = (date: Date) => {
-    const now = new Date();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Disable past dates
-    if (date < today) {
-        return true;
-    }
-
-    // If it's after 12 PM, disable today
-    if (now.getHours() >= 12 && date.getTime() === today.getTime()) {
-        return true;
-    }
-
-    return false;
-};
-
 const locations = [
   "Brookefield - Whitefield",
   "Munnekollal - Marathahalli",
   "Kadubeesanahalli - Marathahalli",
-  "Aswath Nagar - Marathahalli",
-  "Sanjay Nagar - Marathahalli",
+  "Hoodi - Marathahalli",
+  "ITPL- Whitefield",
   "Doddenakundi - Marathahalli",
   "Panathur - Marathahalli",
-  "Kartik Nagar - Marathahalli",
-  "EPIP Zone - Whitefield",
+  "Garudachar Palya - Marathahalli",
   "Kundalahalli - Whitefield",
   "Varthur - Whitefield",
   "Hope Farm Junction - Whitefield",
-  "Nagondanahalli - Whitefield",
+  "Siddapura - Whitefield",
+  "Madhevpura"
 ];
 
 export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProps) {
@@ -72,36 +54,63 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
   const [preferredShift, setPreferredShift] = useState('');
   const [nearbyLocation, setNearbyLocation] = useState('');
   const [address, setAddress] = useState('');
+  const [isDatePickerOpen, setDatePickerOpen] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<'customerName' | 'phoneNumber' | 'selectedDate' | 'preferredShift' | 'address' | 'nearbyLocation', string>>>({});
   const { toast } = useToast();
 
+  const disabledDays = (date: Date) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Disable past dates
+    if (date < today) {
+      return true;
+    }
+
+    // For trial plan, disable today if it's after the last slot cutoff (7 PM)
+    if (planInfo?.type === 'trial' && date.getTime() === today.getTime() && now.getHours() >= 17) {
+      return true;
+    }
+
+    return false;
+  };
+
   const availableShifts = useMemo(() => {
     if (!selectedDate) return [];
+    const allShifts = ['6-7 AM', '7-8 AM', '8-9 AM', '9-10 AM', '6-7 PM', '7-8 PM', '8-9 PM'];
+
+    if (planInfo?.type !== 'trial') {
+      return allShifts;
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     const selDate = new Date(selectedDate);
     selDate.setHours(0, 0, 0, 0);
-
     const isToday = selDate.getTime() === today.getTime();
     const currentHour = new Date().getHours();
 
-    // If it's today AND before noon, only show evening shifts for today.
-    if (isToday && currentHour < 12) {
-      return ['6-7 PM', '7-8 PM', '8-9 PM'];
+    if (isToday) {
+      const eveningShifts = ['6-7 PM', '7-8 PM', '8-9 PM'];
+      if (currentHour < 17) { // Before 5 PM, show all evening shifts
+        return eveningShifts;
+      }
+      return []; // After 5 PM, no slots for today
     }
     
-    // Otherwise (if it's today after noon, or any future day), show all shifts.
-    return ['6-7 AM', '7-8 AM', '8-9 AM', '9-10 AM', '6-7 PM', '7-8 PM', '8-9 PM'];
-  }, [selectedDate]);
+    // For future dates, show all shifts
+    return allShifts;
+  }, [selectedDate, planInfo?.type]);
 
   useEffect(() => {
     if (isOpen) {
       const now = new Date();
-      const isBeforeNoon = now.getHours() < 12;
-      // Today if before noon, otherwise tomorrow
-      const initialDate = isBeforeNoon ? now : new Date(new Date().setDate(now.getDate() + 1));
+      let initialDate;
+      if (planInfo?.type === 'trial' && now.getHours() >= 17) {
+        initialDate = new Date(new Date().setDate(now.getDate() + 1));
+      } else {
+        initialDate = now;
+      }
       setSelectedDate(initialDate);
     } else {
       // Reset form on close
@@ -114,8 +123,19 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
       setPaymentMethod('cod');
       setSelectedDate(undefined);
     }
-  }, [isOpen]);
+  }, [isOpen, planInfo?.type]);
 
+  useEffect(() => {
+    if (selectedDate && planInfo?.type === 'trial') {
+      const isToday = new Date(selectedDate).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0);
+      if (isToday && availableShifts.length === 0) {
+        toast({
+          title: "Today's slots are full",
+          description: "Today's delivery slots are full. Please select tomorrow.",
+        });
+      }
+    }
+  }, [selectedDate, availableShifts, planInfo?.type, toast]);
   if (!planInfo) return null;
 
   const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0);
@@ -145,6 +165,11 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
       return;
     }
 
+    toast({
+        title: "Redirecting to WhatsApp",
+        description: "Please wait a moment. We're preparing your order details for WhatsApp.",
+    });
+
     const message = `
 *New Greezo Order Confirmation*
 -----------------------------------
@@ -163,8 +188,10 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
 
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919449614641';
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-    onClose();
+    setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+        onClose();
+    }, 3000);
   };
 
   return (
@@ -238,7 +265,7 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="start-date">Start Date</Label>
-                <Popover>
+                <Popover open={isDatePickerOpen} onOpenChange={setDatePickerOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant={"outline"}
@@ -258,6 +285,7 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
                       selected={selectedDate}
                       onSelect={(date) => {
                         setSelectedDate(date);
+                        setDatePickerOpen(false);
                         setPreferredShift(''); // Reset shift when date changes
                       }}
                       disabled={disabledDays}
@@ -266,7 +294,7 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
                   </PopoverContent>
                 </Popover>
                 {planInfo.type === 'trial' && (<p className="text-xs text-muted-foreground mt-1.5 px-1">
-                    Order before 12 PM for today's evening shift, or for tomorrow.
+                    Order before 5PM for todays evening Shift or order for tommorow  Shift
                 </p>)}
                 {errors.selectedDate && <p className="text-red-500 text-xs mt-1">{errors.selectedDate}</p>}
               </div>

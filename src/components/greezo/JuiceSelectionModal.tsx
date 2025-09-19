@@ -32,7 +32,7 @@ const ALL_JUICES = [
     description: "Ondelaga and Honey blend"
   },
   {
-    name: "Ginger Lime",
+    name: "Lime Ginger Sabja",
     image: "/images/juices/ginger-lime.png",
     description: "Refreshing citrus blend"
   },
