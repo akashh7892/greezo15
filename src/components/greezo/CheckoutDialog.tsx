@@ -91,11 +91,15 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
     const currentHour = new Date().getHours();
 
     if (isToday) {
-      const eveningShifts = ['6-7 PM', '7-8 PM', '8-9 PM'];
-      if (currentHour < 17) { // Before 5 PM, show all evening shifts
-        return eveningShifts;
+      let eveningShifts = ['6-7 PM', '7-8 PM', '8-9 PM'];
+      if (currentHour >= 17) { // 5 PM or later
+        return []; // All today's shifts are closed
       }
-      return []; // After 5 PM, no slots for today
+      if (currentHour >= 15) { // 3 PM or later (but before 5 PM)
+        // Show only 6-7 PM and 7-8 PM shifts, as 8-9 PM shift booking is closed.
+        return eveningShifts.filter(s => s !== '8-9 PM');
+      }
+      return eveningShifts; // Before 3 PM, all evening shifts are available
     }
     
     // For future dates, show all shifts
