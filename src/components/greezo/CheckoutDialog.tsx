@@ -183,6 +183,7 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
 *Preferred Shift:* ${preferredShift}
 *Plan:* ${planNameWithEgg}
 *Juice Pack:* ${planInfo.juiceAdded ? 'Yes' : 'No'}
+${planInfo.juiceAdded && planInfo.selectedJuices.length > 0 ? `*Selected Juice(s):* ${planInfo.selectedJuices.join(', ')}` : ''}
 *Total Price:* ₹${totalPrice}
 *Nearby Location:* ${nearbyLocation}
 *Address:* ${address}
