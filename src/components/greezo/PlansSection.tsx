@@ -1,15 +1,13 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { CheckoutDialog, type CheckoutPlanInfo } from './CheckoutDialog';
 import { JuiceSelectionModal } from './JuiceSelectionModal';
@@ -103,8 +101,11 @@ const juiceImages = [
   "/images/juices/lime-chia.png"
 ];
 
-export function PlansSection() {
-  const [hasEgg, setHasEgg] = useState(true);
+type PlansSectionProps = {
+  hasEgg: boolean;
+};
+
+export function PlansSection({ hasEgg }: PlansSectionProps) {
   
   // Popup checkout states
   const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
@@ -206,27 +207,10 @@ export function PlansSection() {
   };
 
   return (
-    <section id="plans" className="py-16 sm:py-24" style={{ backgroundColor: '#F0FAF2' }}>
+    <section id="plans" className="pt-8 pb-16 sm:pt-12 sm:pb-24" style={{ backgroundColor: '#F0FAF2' }}>
       <div className="container mx-auto px-4 flex flex-col items-center">
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-primary mb-4 text-center">Our Subscription Plans</h2>
         <p className="text-lg text-muted-foreground mb-6 text-center max-w-2xl">Select a plan that fits your lifestyle. Cancel or switch anytime.</p>
-        
-        {/* Egg/Non-Egg Toggle */}
-        <div className="flex items-center space-x-3 mb-8">
-          <Label htmlFor="egg-toggle" className={`font-semibold ${!hasEgg ? 'text-primary' : 'text-muted-foreground'}`}>
-            🥗 Non-Egg
-          </Label>
-          <Switch 
-            id="egg-toggle"
-            name="egg-preference"
-            checked={hasEgg}
-            onCheckedChange={(checked) => setHasEgg(checked)}
-            className="data-[state=checked]:bg-accent"
-          />
-          <Label htmlFor="egg-toggle" className={`font-semibold ${hasEgg ? 'text-yellow-600' : 'text-muted-foreground'}`}>
-            🥚 Egg
-          </Label>
-        </div>
         <Tabs defaultValue="weekly" className="w-full max-w-4xl">
           <TabsList className="grid w-full grid-cols-2 bg-primary/10 rounded-full">
             <TabsTrigger value="weekly" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Weekly Plans</TabsTrigger>

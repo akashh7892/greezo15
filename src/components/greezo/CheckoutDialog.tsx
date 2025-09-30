@@ -142,8 +142,11 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
   }, [selectedDate, availableShifts, planInfo?.type, toast]);
   if (!planInfo) return null;
 
-  const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0);
-  const planNameWithEgg = `${planInfo.name} (${planInfo.hasEgg ? 'Egg' : 'Veg'})`;
+  const handlingCharge = 2;
+  const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0) + handlingCharge;
+  const planNameWithEgg = planInfo.type === 'subscription' 
+    ? `${planInfo.name} (${planInfo.hasEgg ? 'Egg' : 'Veg'})`
+    : planInfo.name;
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -183,7 +186,9 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
 *Preferred Shift:* ${preferredShift}
 *Plan:* ${planNameWithEgg}
 *Juice Pack:* ${planInfo.juiceAdded ? 'Yes' : 'No'}
+${planInfo.name.includes('Navaratri') && planInfo.hasEgg ? `*Extra Eggs:* Yes` : ''}
 ${planInfo.juiceAdded && planInfo.selectedJuices.length > 0 ? `*Selected Juice(s):* ${planInfo.selectedJuices.join(', ')}` : ''}
+*Handling Charge:* ₹${handlingCharge}
 *Total Price:* ₹${totalPrice}
 *Nearby Location:* ${nearbyLocation}
 *Address:* ${address}

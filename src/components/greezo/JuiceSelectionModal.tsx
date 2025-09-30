@@ -4,6 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sparkles } from 'lucide-react';
 
@@ -117,38 +124,47 @@ export function JuiceSelectionModal({
           </div>
 
           {/* Juice Selection Grid */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {getJuicesToShow().map((juice, index) => (
-              <Card 
-                key={index}
-                className={`transition-all duration-200 ${
-                  planType === 'trial' 
-                    ? `cursor-pointer hover:shadow-lg ${selectedJuices.includes(juice.name) ? 'ring-2 ring-primary bg-primary/5' : 'hover:shadow-md'}`
-                    : 'cursor-default'
-                }`}
-                onClick={planType === 'trial' ? () => handleJuiceToggle(juice.name) : undefined}
-              >
-                <CardContent className="p-4 text-center">
-                  <div className="relative">
-                    <Image 
-                      src={juice.image}
-                      alt={juice.name}
-                      data-ai-hint="fresh juice option"
-                      width={120}
-                      height={120}
-                      className="rounded-lg mx-auto mb-2"
-                    />
-                    {planType === 'trial' && selectedJuices.includes(juice.name) && (
-                      <div className="absolute -top-2 -right-2 bg-primary text-white rounded-full p-1">
-                        <Sparkles className="h-4 w-4" />
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="font-semibold text-sm mb-1">{juice.name}</h4>
-                  <p className="text-xs text-muted-foreground">{juice.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="relative">
+            <Carousel opts={{ align: "start" }} className="w-full">
+              <CarouselContent className="-ml-4">
+                {getJuicesToShow().map((juice, index) => (
+                  <CarouselItem key={index} className="pl-4 basis-2/3 sm:basis-1/3">
+                    <div className="p-1 h-full">
+                      <Card 
+                        className={`h-full flex flex-col transition-all duration-200 ${
+                          planType === 'trial' 
+                            ? `cursor-pointer hover:shadow-lg ${selectedJuices.includes(juice.name) ? 'ring-2 ring-primary bg-primary/5' : 'hover:shadow-md'}`
+                            : 'cursor-default'
+                        }`}
+                        onClick={planType === 'trial' ? () => handleJuiceToggle(juice.name) : undefined}
+                      >
+                        <CardContent className="p-4 text-center flex flex-col flex-grow">
+                          <div className="relative flex-grow">
+                            <Image 
+                              src={juice.image}
+                              alt={juice.name}
+                              data-ai-hint="fresh juice option"
+                              width={120}
+                              height={120}
+                              className="rounded-lg mx-auto mb-2"
+                            />
+                            {planType === 'trial' && selectedJuices.includes(juice.name) && (
+                              <div className="absolute -top-2 -right-2 bg-primary text-white rounded-full p-1">
+                                <Sparkles className="h-4 w-4" />
+                              </div>
+                            )}
+                          </div>
+                          <h4 className="font-semibold text-sm mb-1 mt-auto">{juice.name}</h4>
+                          <p className="text-xs text-muted-foreground">{juice.description}</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 hidden sm:flex" />
+              <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 hidden sm:flex" />
+            </Carousel>
           </div>
 
           {/* Selection Info */}
