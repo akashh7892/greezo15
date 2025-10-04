@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { useToast } from '@/hooks/use-toast';
 import { CheckoutDialog, type CheckoutPlanInfo } from './CheckoutDialog';
 import { JuiceSelectionModal } from './JuiceSelectionModal';
+import { Hand } from 'lucide-react';
 
 type Plan = {
   id: string;
@@ -112,6 +113,9 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
   const [checkoutPlanInfo, setCheckoutPlanInfo] = useState<CheckoutPlanInfo | null>(null);
   const [showJuiceSelectionModal, setShowJuiceSelectionModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [showViewDetailsHint, setShowViewDetailsHint] = useState(false);
+  const hintDismissed = useRef(false);
+  const plansSectionRef = useRef<HTMLDivElement>(null);
   
   const { toast } = useToast();
 
@@ -120,21 +124,58 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
     return mealImages; // Return exactly 6 unique images, no repetition
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hintDismissed.current) {
+          setShowViewDetailsHint(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = plansSectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  const handleDismissHint = () => {
+    setShowViewDetailsHint(false);
+    hintDismissed.current = true;
+  };
+
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
     setShowJuiceSelectionModal(true);
   };
 
-  const handleJuiceSelectionFromModal = (selected: boolean, juices?: string[]) => {
+  const handleJuiceSelectionFromModal = (healthySelected: boolean, freshSelected: boolean) => {
     setShowJuiceSelectionModal(false);
     if (selectedPlan) {
-      const juicePrice = selectedPlan.type === 'weekly' ? 399 : 1599;
+      let finalPrice = selectedPlan.price;
+      let juicePriceInfo = { healthy: 0, fresh: 0 };
+
+      if (healthySelected) {
+        juicePriceInfo.healthy = 349;
+      }
+      if (freshSelected) {
+        juicePriceInfo.fresh = 459;
+      }
+
       setCheckoutPlanInfo({
         name: selectedPlan.name,
-        price: selectedPlan.price,
-        juicePrice: juicePrice,
-        juiceAdded: selected,
-        selectedJuices: juices || [],
+        price: finalPrice,
+        juicePrice: juicePriceInfo.healthy + juicePriceInfo.fresh, // Total juice price
+        juiceAdded: healthySelected || freshSelected,
+        selectedJuices: [], // Simplified for this flow
         type: 'subscription',
         hasEgg,
       });
@@ -159,7 +200,20 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
                 <span className="text-lg line-through text-muted-foreground font-rupees rupee-symbol">₹{plan.originalPrice.toLocaleString()}</span>
               </div>
             </CardHeader>
-            <CardFooter className="flex justify-between items-center p-6 bg-slate-50/70">
+            <CardFooter className="flex justify-between items-center p-6 bg-slate-50/70 relative">
+              {showViewDetailsHint && (plan.id === 'w-basic' || plan.id === 'm-basic') && (
+                <div className="absolute -top-20 left-4 w-max max-w-xs p-3 bg-primary text-primary-foreground text-sm rounded-md shadow-lg z-10 animate-scale-in-pop flex flex-col items-center gap-2">
+                  <p className="text-center flex items-center gap-1"><Hand className="h-4 w-4" /> View our product by clicking here</p>
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="h-6 px-2 text-xs bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
+                    onClick={handleDismissHint}>
+                    Ok
+                  </Button>
+                  <div className="absolute -bottom-2 left-8 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-primary"></div>
+                </div>
+              )}
               <CollapsibleTrigger asChild >
                 <Button variant="ghost" disabled={plan.isComingSoon} className="text-primary hover:bg-primary/10">View Details</Button>
               </CollapsibleTrigger>
@@ -207,7 +261,7 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
   };
 
   return (
-    <section id="plans" className="pt-8 pb-16 sm:pt-12 sm:pb-24" style={{ backgroundColor: '#F0FAF2' }}>
+    <section id="plans" ref={plansSectionRef} className="pt-8 pb-16 sm:pt-12 sm:pb-24" style={{ backgroundColor: '#F0FAF2' }}>
       <div className="container mx-auto px-4 flex flex-col items-center">
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-primary mb-4 text-center">Our Subscription Plans</h2>
         <p className="text-lg text-muted-foreground mb-6 text-center max-w-2xl">Select a plan that fits your lifestyle. Cancel or switch anytime.</p>

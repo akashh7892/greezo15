@@ -22,6 +22,7 @@ export interface CheckoutPlanInfo {
   selectedJuices: string[];
   type: 'subscription' | 'trial';
   hasEgg: boolean;
+  extraEggCount?: number;
 }
 
 interface CheckoutDialogProps {
@@ -143,7 +144,8 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
   if (!planInfo) return null;
 
   const handlingCharge = 2;
-  const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0) + handlingCharge;
+  const eggPrice = (planInfo.extraEggCount || 0) * 12;
+  const totalPrice = planInfo.price + (planInfo.juiceAdded ? planInfo.juicePrice : 0) + eggPrice + handlingCharge;
   const planNameWithEgg = planInfo.type === 'subscription' 
     ? `${planInfo.name} (${planInfo.hasEgg ? 'Egg' : 'Veg'})`
     : planInfo.name;
@@ -186,7 +188,7 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
 *Preferred Shift:* ${preferredShift}
 *Plan:* ${planNameWithEgg}
 *Juice Pack:* ${planInfo.juiceAdded ? 'Yes' : 'No'}
-${planInfo.name.includes('Navaratri') && planInfo.hasEgg ? `*Extra Eggs:* Yes` : ''}
+${(planInfo.hasEgg && planInfo.type === 'subscription') || (planInfo.extraEggCount && planInfo.extraEggCount > 0) ? `*Protein Add-on:* Egg ${planInfo.extraEggCount ? `(x${planInfo.extraEggCount})` : ''}` : ''}
 ${planInfo.juiceAdded && planInfo.selectedJuices.length > 0 ? `*Selected Juice(s):* ${planInfo.selectedJuices.join(', ')}` : ''}
 *Handling Charge:* ₹${handlingCharge}
 *Total Price:* ₹${totalPrice}
@@ -225,6 +227,16 @@ ${planInfo.juiceAdded && planInfo.selectedJuices.length > 0 ? `*Selected Juice(s
                     <span className="font-rupees rupee-symbol">₹{planInfo.juicePrice}</span>
                 </div>
             )}
+            {planInfo.extraEggCount && planInfo.extraEggCount > 0 && (
+                <div className="flex justify-between text-sm">
+                    <span>Extra Eggs (x{planInfo.extraEggCount})</span>
+                    <span className="font-rupees rupee-symbol">₹{planInfo.extraEggCount * 12}</span>
+                </div>
+            )}
+            <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Handling Charge</span>
+                <span className="font-rupees rupee-symbol">₹{handlingCharge}</span>
+            </div>
             <div className="border-t my-2"></div>
             <div className="flex justify-between font-bold text-md">
                 <span>Total Price</span>

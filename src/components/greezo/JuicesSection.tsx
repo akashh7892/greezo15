@@ -22,9 +22,9 @@ export function JuicesSection() {
   return (
     <section id="juices" className="py-16 sm:py-24">
       <div className="container mx-auto px-4 flex flex-col items-center">
-        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-primary mb-4 text-center">Our Fresh Juices</h2>
+        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-primary mb-4 text-center">Our Healthy Juices</h2>
         <p className="text-lg text-muted-foreground mb-8 text-center max-w-2xl">
-          Complement your meal plan with our daily selection of cold-pressed juices, packed with vitamins and natural flavor.
+          Complement your meal plan with our daily selection of cold-pressed healthy juices, packed with vitamins and natural flavor.
         </p>
         <Carousel className="w-full max-w-4xl" opts={{ loop: true, align: "start" }}>
           <CarouselContent className="-ml-4">

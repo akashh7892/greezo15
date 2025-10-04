@@ -37,6 +37,8 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
   const [extraEggCount, setExtraEggCount] = useState(0);
   const [navaratriWithEgg, setNavaratriWithEgg] = useState(false);
   const [showToggleHint, setShowToggleHint] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [carouselCurrent, setCarouselCurrent] = useState(0);
 
   useEffect(() => {
     // This hint now shows in EGG mode and stays until dismissed
@@ -57,33 +59,37 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
     }
   };
 
-  const handleJuiceSelection = (selected: boolean, juices?: string[]) => {
+  const handleJuiceSelection = (healthySelected: boolean, freshSelected: boolean, selectedJuices?: string[], juicePrice?: number) => {
     setShowJuiceSelection(false);
     let planName = 'Muesli Oats - Trial';
     let planHasEgg = false; // Oats doesn't have an egg option
     let price = 89;
     let finalHasEgg = hasEgg;
-    let juicePrice = 9;
+    let finalJuicePrice = juicePrice !== undefined ? juicePrice : 9;
 
     if (selectedTrial === 'sprouts') {
-      planName = 'Mixed Sprout Salad - Trial';      price = 69 + (extraEggCount * 12);
+      planName = 'Mixed Sprout Salad - Trial';
+      price = 69;
       planHasEgg = hasEgg || extraEggCount > 0;
     } else if (selectedTrial === 'navaratri') {
       planName = 'Navaratri Offer - 2 Salads';
-      price = 129 + (extraEggCount * 12);
+      price = 129;
       planHasEgg = extraEggCount > 0;
       finalHasEgg = hasEgg || extraEggCount > 0;
-      juicePrice = 19; // Special juice price for combo
+      finalJuicePrice = juicePrice !== undefined ? juicePrice : 19; // Special juice price for combo
     }
+
+    const juiceAdded = healthySelected || freshSelected;
 
     setCheckoutPlanInfo({
       name: planName, 
       price: price,
-      juicePrice: juicePrice,
-      juiceAdded: selected,
-      selectedJuices: juices || [],
+      juicePrice: finalJuicePrice,
+      juiceAdded: juiceAdded,
+      selectedJuices: selectedJuices || [],
       type: 'trial',
       hasEgg: finalHasEgg,
+      extraEggCount: extraEggCount,
     });
     setShowCheckoutDialog(true);
   };
@@ -176,9 +182,9 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
         {/* Ticker Text */}
         <div className="mt-12 overflow-x-hidden">
           <div className="animate-marquee whitespace-nowrap">
-            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200">✨ Trial Packs now include items from our Main Menu too!</span>
-            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200">✨ Trial Packs now include items from our Main Menu too!</span>
-            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200">✨ Trial Packs now include items from our Main Menu too!</span>
+            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200"> The trial plan is included in our main menu</span>
+            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200"> The trial plan is included in our main menu</span>
+            <span className="py-3 mx-8 font-semibold text-lg text-green-800 dark:text-green-200"> The trial plan is included in our main menu.</span>
           </div>
         </div>
 
@@ -193,7 +199,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
-                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Mixed Sprout Salad</h3>
+                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Mixed Sprout Salad (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹69</span>
                   <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹129</span>
                 </div>
@@ -210,14 +216,14 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Oats Trial Card */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-teal-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol">₹</span>50 OFFER
+                FLAT <span className="font-rupees rupee-symbol"></span>50% OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
-                <Image src={"/images/meals/oats.png"} alt={`Muesli Oats - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
-                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Muesli Oats</h3>
+                <Image src={"/images/meals/oats.png"} alt={`Fruits pop Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
+                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits pop Muesli (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
                   <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹89</span>
-                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹139</span>
+                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹179</span>
                 </div>
                 <Button 
                   size="sm" 
@@ -228,6 +234,54 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 </Button>
               </CardContent>
             </Card>
+
+            {/* Coupon Code Slider */}
+            <div className="col-span-2 mt-8 relative">
+              <Carousel
+                setApi={setCarouselApi}
+                plugins={[
+                  Autoplay({
+                    delay: 5000,
+                    stopOnInteraction: true,
+                  }),
+                ]}
+                className="w-full"
+                opts={{ loop: true }}
+              >
+                <CarouselContent>
+                  <CarouselItem>
+                  <div className="p-1">
+                      <div className="relative flex flex-col items-center justify-center gap-4 p-6 sm:p-10 min-h-[160px] sm:min-h-[140px] rounded-lg bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-primary-foreground overflow-hidden">
+                        <div className="absolute -left-12 -top-12 w-36 h-36 rounded-full bg-white/10"></div>
+                        <div className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full bg-white/10"></div>
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center z-10">Follow us on Instagram to win exciting prizes!</h3>
+                        <Button asChild size="lg" className="bg-white/90 text-pink-600 hover:bg-white z-10 shadow-lg">
+                          <a href="https://www.instagram.com/greezo_official?igsh=OXp5ZHdhY3dkZXRz" target="_blank" rel="noopener noreferrer">Follow Now</a>
+                        </Button>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem>
+                    <div className="p-1">
+                      <div className="relative flex flex-col items-center justify-center gap-4 p-6 sm:p-10 min-h-[160px] sm:min-h-[140px] rounded-lg bg-gradient-to-r from-blue-500 to-cyan-400 text-primary-foreground overflow-hidden">
+                        <div className="absolute -left-12 -top-12 w-36 h-36 rounded-full bg-white/10"></div>
+                        <div className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full bg-white/10"></div>
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center z-10">Win a contest and earn a free juice of your choice!</h3>
+                        <Button asChild size="lg" className="bg-white/90 text-blue-600 hover:bg-white z-10 shadow-lg">
+                          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_placeholder_form_id/viewform" target="_blank" rel="noopener noreferrer">Enroll Now</a>
+                        </Button>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+              </Carousel>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <button key={i} onClick={() => carouselApi?.scrollTo(i)} className={`h-2 w-2 rounded-full transition-colors ${carouselCurrent === i ? 'bg-white' : 'bg-white/50'}`}></button>
+                ))}
+              </div>
+            </div>
+
 
             {/* Navaratri Offer Card */}
             <div className="col-span-2 mt-8">
@@ -251,7 +305,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                       </Button>
                     </div>
                     <div className="w-full col-span-1">
-                      <Image src="/vegimages/MIX veg.png" alt="Mixed Sprout Salad" width={400} height={300} className="rounded-lg object-cover aspect-video shadow-lg" />
+                      <Image src="/vegimages/MIX veg.png" alt="Mixed Sprout Salad" width={400} height={300} className="rounded-lg object-cover aspect-[4/3] shadow-lg" />
                     </div>
                   </div>
                 </CardContent>
@@ -286,7 +340,14 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             </DialogTitle>
           </DialogHeader>
           <div className="py-6 text-center">
-            <p className="text-muted-foreground mb-6">Boost your salads with extra boiled eggs for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span> each.</p>
+            {selectedTrial === 'sprouts' ? (
+              <div className="text-muted-foreground mb-6 space-y-2">
+                <p className="font-semibold text-slate-700">One egg is enough for you!</p>
+                <p className="text-sm">Boost your trial meal with a high-quality protein source for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span>.</p>
+              </div>
+            ) : (
+              <p className="text-muted-foreground mb-6">Boost your salads with extra boiled eggs for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span> each.</p>
+            )}
             <div className="flex items-center justify-center gap-4 mb-6">
               <Button size="icon" variant="outline" onClick={() => setExtraEggCount(Math.max(0, extraEggCount - 1))} disabled={extraEggCount === 0}>
                 <Minus className="h-4 w-4" />
@@ -298,11 +359,19 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
-            <Button size="lg" className="w-full" onClick={handleEggCounterConfirm}>
-              <span>
-                Continue (+ <span className="font-rupees rupee-symbol">₹</span>{extraEggCount * 12})
-              </span>
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button 
+                size="lg" 
+                className="w-full" 
+                onClick={handleEggCounterConfirm}
+                disabled={extraEggCount === 0}
+              >
+                  <span>
+                    Continue (+ <span className="font-rupees rupee-symbol">₹</span>{extraEggCount * 12})
+                  </span>
+              </Button>
+              <Button variant="outline" className="w-full" onClick={handleEggCounterConfirm}>No thanks, proceed to next</Button>
+            </div>
           </div>
         </DialogContentPrimitive>
       </Dialog>

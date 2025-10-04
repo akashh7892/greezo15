@@ -16,6 +16,7 @@ type HeaderProps = {
 };
 
 const navLinks: { name: string; section: keyof SectionRefs }[] = [
+  { name: 'Juices', section: 'juices' },
   { name: 'Plans', section: 'plans' },
   { name: 'About Us', section: 'about' },
   { name: 'Contact Us', section: 'contact' },

@@ -1,23 +1,16 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Check, Sparkles } from 'lucide-react';
 
 interface JuiceSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (selected: boolean, selectedJuices?: string[]) => void;
+  onSelect: (healthySelected: boolean, freshSelected: boolean, selectedJuices?: string[], juicePrice?: number) => void;
   planType?: 'trial' | 'subscription';
   juicePrice?: number;
 }
@@ -55,27 +48,45 @@ const ALL_JUICES = [
   }
 ];
 
-const TRIAL_JUICES = ALL_JUICES.slice(0, 3); // First 3 juices for trial
+const FRESH_JUICES = [
+  { name: "Grapes Juice", image: "/images/fresh-juices/grapes-juice.png", description: "Rich & antioxidant-packed" },
+  { name: "Apple Smoothie", image: "/images/fresh-juices/apple-smoothie.png", description: "Creamy & wholesome" },
+  { name: "Pineapple Juice", image: "/images/fresh-juices/pineapple-juice.png", description: "Sweet & tangy tropical boost" },
+  { name: "Banana Dates Smoothie", image: "/images/fresh-juices/banana-dates-smoothie.png", description: "Natural energy & sweetness" },
+  { name: "Lime Chia Juice", image: "/images/fresh-juices/lime-chia-juice.png", description: "Zesty with a fiber kick" },
+  { name: "Tender Coconut", image: "/images/fresh-juices/tender-coconut.png", description: "Pure, hydrating electrolyte" },
+];
+
+const TRIAL_JUICES = FRESH_JUICES.slice(0, 3); // First 3 juices for trial
+const TRIAL_HEALTHY_JUICES = ALL_JUICES.slice(0, 3);
+const TRIAL_FRESH_JUICES = FRESH_JUICES.slice(0, 3);
 
 export function JuiceSelectionModal({
   isOpen,
   onClose,
   onSelect,
   planType = 'trial',
-  juicePrice = 9
+  juicePrice: initialJuicePrice = 9
 }: JuiceSelectionModalProps) {
   const [selectedJuices, setSelectedJuices] = useState<string[]>([]);
+  const [healthyJuiceAdded, setHealthyJuiceAdded] = useState(false);
+  const [freshJuiceAdded, setFreshJuiceAdded] = useState(false);
+  const freshJuiceSectionRef = useRef<HTMLDivElement>(null);
+
   const getJuicesToShow = () => {
     return planType === 'trial' ? TRIAL_JUICES : ALL_JUICES;
+    // This function is now only for the subscription plan's ALL_JUICES
+    return ALL_JUICES;
   };
 
-  const handleJuiceToggle = (juiceName: string) => {
+  const handleJuiceToggle = (juiceName: string, price: number) => {
     if (planType === 'trial') {
       // For trial, only one selection allowed
       setSelectedJuices([juiceName]);
+      // We'll pass the price back through the onSelect function
     } else {
       // For subscriptions, multiple selections
-      setSelectedJuices(prev => 
+      setSelectedJuices(prev =>
         prev.includes(juiceName) 
           ? prev.filter(j => j !== juiceName)
           : [...prev, juiceName]
@@ -84,130 +95,215 @@ export function JuiceSelectionModal({
   };
 
   const handleConfirm = () => {
-    onSelect(true, selectedJuices);
+    if (planType === 'subscription') {
+      onSelect(healthyJuiceAdded, freshJuiceAdded);
+    } else {
+      // For trial, determine which pack was selected to pass the correct price
+      const isHealthy = TRIAL_HEALTHY_JUICES.some(j => j.name === selectedJuices[0]);
+      if (isHealthy) {
+        onSelect(true, false, selectedJuices, 9);
+      } else {
+        onSelect(false, true, selectedJuices, 25);
+      }
+    }
     onClose();
     resetState();
   };
 
   const handleSkip = () => {
-    onSelect(false);
+    onSelect(false, false);
     onClose();
     resetState();
   };
 
   const resetState = () => {
     setSelectedJuices([]);
+    setHealthyJuiceAdded(false);
+    setFreshJuiceAdded(false);
   };
+
+  const scrollToFreshJuices = () => {
+    freshJuiceSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleHealthyJuiceInteraction = (add: boolean) => {
+    setHealthyJuiceAdded(add);
+    setTimeout(scrollToFreshJuices, 100); // Timeout to allow state update before scrolling
+  };
+
   if (!isOpen) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Add Fresh Juice?
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader className="text-center sm:text-left">
+          <DialogTitle className="text-2xl font-bold text-primary">
+            Boost Your Plan with Juices!
           </DialogTitle>
+          <DialogDescription>Add our popular juice packs to your subscription.</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Price Display */}
-          <div className="text-center">
-            <p className="text-xl font-bold text-primary mb-2">
-              <span className="font-rupees rupee-symbol">+₹{juicePrice}</span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {planType === 'trial' 
-                ? 'Select your favorite juice for trial (choose 1)' 
-                : 'Add a pack of assorted fresh juices to your subscription.'
-              }
-            </p>
-          </div>
+        {planType === 'subscription' ? (
+          <div className="flex flex-col h-full max-h-[75vh]">
+            <div className="flex-grow overflow-y-auto -mx-6 px-6 space-y-6 pb-4 pr-2">
+              {/* Healthy Juices Section */}
+              <div className="space-y-3">
+                <h3 className="font-bold text-lg text-center">Healthy Juice Pack</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {ALL_JUICES.map(juice => (
+                    <Card key={juice.name} className="overflow-hidden rounded-lg border-border/50 shadow-sm flex flex-col">
+                      <CardContent className="p-0 flex flex-col text-center">
+                        <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full" />
+                        <div className="p-2">
+                          <h4 className="font-semibold text-xs">{juice.name}</h4>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              <div className="text-center space-y-1">
+                <div className="flex items-baseline justify-center gap-2">
+                  <p className="text-xl font-bold"><span className="font-rupees rupee-symbol">₹349</span></p>
+                  <p className="text-sm line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹559</span></p>
+                </div>
+                <p className="text-xs text-muted-foreground">One juice per day for 6 days.</p> 
+                <Button size="sm" variant={healthyJuiceAdded ? "secondary" : "default"} className={`w-full mt-1 ${healthyJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => handleHealthyJuiceInteraction(!healthyJuiceAdded)}>
+                  {healthyJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add Healthy Juice Pack"}
+                </Button>
+                <Button variant="link" size="sm" className="text-xs h-auto py-1 text-muted-foreground" onClick={() => scrollToFreshJuices()}>
+                  No, thanks
+                </Button>
+                </div>
+              </div>
 
-          {/* Juice Selection Grid */}
-          <div className="relative">
-            <Carousel opts={{ align: "start" }} className="w-full">
-              <CarouselContent className="-ml-4">
-                {getJuicesToShow().map((juice, index) => (
-                  <CarouselItem key={index} className="pl-4 basis-2/3 sm:basis-1/3">
-                    <div className="p-1 h-full">
-                      <Card 
-                        className={`h-full flex flex-col transition-all duration-200 ${
-                          planType === 'trial' 
-                            ? `cursor-pointer hover:shadow-lg ${selectedJuices.includes(juice.name) ? 'ring-2 ring-primary bg-primary/5' : 'hover:shadow-md'}`
-                            : 'cursor-default'
-                        }`}
-                        onClick={planType === 'trial' ? () => handleJuiceToggle(juice.name) : undefined}
-                      >
-                        <CardContent className="p-4 text-center flex flex-col flex-grow">
-                          <div className="relative flex-grow">
-                            <Image 
-                              src={juice.image}
-                              alt={juice.name}
-                              data-ai-hint="fresh juice option"
-                              width={120}
-                              height={120}
-                              className="rounded-lg mx-auto mb-2"
-                            />
-                            {planType === 'trial' && selectedJuices.includes(juice.name) && (
-                              <div className="absolute -top-2 -right-2 bg-primary text-white rounded-full p-1">
-                                <Sparkles className="h-4 w-4" />
-                              </div>
-                            )}
-                          </div>
-                          <h4 className="font-semibold text-sm mb-1 mt-auto">{juice.name}</h4>
-                          <p className="text-xs text-muted-foreground">{juice.description}</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 hidden sm:flex" />
-              <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 hidden sm:flex" />
-            </Carousel>
-          </div>
-
-          {/* Selection Info */}
-          {planType === 'trial' && selectedJuices.length > 0 && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-              <p className="text-sm text-green-700 text-center">
-                <strong>{selectedJuices[0]}</strong> selected! Perfect choice for your trial.
-              </p>
+              {/* Fresh Juices Section */}
+              <div className="space-y-3" ref={freshJuiceSectionRef} style={{scrollMarginTop: '100px'}}>
+                <h3 className="font-bold text-lg text-center">Fresh Juice Pack</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {FRESH_JUICES.map(juice => (
+                    <Card key={juice.name} className="overflow-hidden rounded-lg border-border/50 shadow-sm flex flex-col">
+                      <CardContent className="p-0 flex flex-col text-center">
+                        <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full" />
+                        <div className="p-2">
+                          <h4 className="font-semibold text-xs">{juice.name}</h4>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <div className="text-center space-y-1">
+                  <div className="flex items-baseline justify-center gap-2">
+                    <p className="text-xl font-bold"><span className="font-rupees rupee-symbol">₹449</span></p>
+                    <p className="text-sm line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹659</span></p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">One juice per day for 6 days.</p>
+                  <Button size="sm" variant={freshJuiceAdded ? "secondary" : "default"} className={`w-full mt-1 ${freshJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => setFreshJuiceAdded(!freshJuiceAdded)}>
+                    {freshJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add Fresh Juice Pack"}
+                  </Button>
+                </div>
+              </div>
             </div>
-          )}
+            <div className="mt-auto pt-4 -mx-6 px-6 border-t bg-background">
+              <DialogFooter>
+                <Button 
+                  size="lg" 
+                  className={`w-full transition-colors ${healthyJuiceAdded || freshJuiceAdded ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  disabled={!healthyJuiceAdded && !freshJuiceAdded}
+                  onClick={handleConfirm}
+                >
+                  Continue to Cart
+                </Button>
+              </DialogFooter>
+              <Button variant="link" className="w-full mt-1 text-muted-foreground" onClick={handleSkip}>
+                No thanks, skip for now
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Healthy Juices for Trial */}
+            <div className="space-y-3">
+              <div className="text-center">
+                <div className="flex items-baseline justify-center gap-2 mb-1">
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹9</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹49</span></p>
+                </div>
+                <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {TRIAL_HEALTHY_JUICES.map((juice) => (
+                  <Card
+                    key={juice.name}
+                    className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
+                      selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
+                    }`}
+                    onClick={() => handleJuiceToggle(juice.name, 9)}
+                  >
+                    <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
+                      <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
+                      <div className="p-2 flex-grow flex flex-col">
+                        <h4 className="font-semibold text-xs mb-1">{juice.name}</h4>
+                      </div>
+                      {selectedJuices[0] === juice.name && (
+                        <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5 shadow-lg">
+                          <Check className="h-3 w-3" />
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
 
+            {/* Fresh Juices for Trial */}
+            <div className="space-y-3 pt-4 border-t">
+              <div className="text-center">
+                <div className="flex items-baseline justify-center gap-2 mb-1">
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹25</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹99</span></p>
+                </div>
+                <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {TRIAL_FRESH_JUICES.map((juice) => (
+                  <Card
+                    key={juice.name}
+                    className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
+                      selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
+                    }`}
+                    onClick={() => handleJuiceToggle(juice.name, 25)}
+                  >
+                    <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
+                      <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
+                      <div className="p-2 flex-grow flex flex-col">
+                        <h4 className="font-semibold text-xs mb-1">{juice.name}</h4>
+                      </div>
+                      {selectedJuices[0] === juice.name && (
+                        <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5 shadow-lg">
+                          <Check className="h-3 w-3" />
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:justify-center gap-3">
-            <Button 
-              size="lg" 
-              onClick={handleConfirm}
-              disabled={planType === 'trial' && selectedJuices.length === 0}
-            >
-              <Sparkles />
-              <span>
-                {planType === 'trial'
-                  ? <>Add for <span className="font-rupees rupee-symbol" />{juicePrice}</>
-                  : <>Add Juice Pack <span className="font-rupees rupee-symbol" />{juicePrice}</>
-                }
-              </span>
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              onClick={handleSkip}
-            >
-              Skip Juice
+            <DialogFooter className="pt-4">
+              <Button
+                className="w-full"
+                onClick={handleConfirm}
+                disabled={selectedJuices.length === 0}
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                <span>Add Selected Juice</span>
+              </Button>
+            </DialogFooter>
+            <Button variant="link" className="w-full -mt-2 text-muted-foreground" onClick={handleSkip}>
+              No, thanks
             </Button>
           </div>
-
-          <p className="text-xs text-muted-foreground text-center">
-            {planType === 'trial' 
-              ? 'Try our fresh juice with your trial meal!'
-              : 'Fresh juices delivered with your meal subscription'
-            }
-          </p>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );
