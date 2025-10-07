@@ -15,6 +15,7 @@ import { CheckoutDialog, type CheckoutPlanInfo } from './CheckoutDialog';
 import { JuiceSelectionModal } from './JuiceSelectionModal';
 import { Plus, Minus, Egg } from 'lucide-react';
 import Autoplay from "embla-carousel-autoplay";
+import { ContestInfoModal } from './ContestInfoModal';
 
 type HomeSectionProps = {
   onScrollToPlans: () => void; 
@@ -33,6 +34,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
   const [checkoutPlanInfo, setCheckoutPlanInfo] = useState<CheckoutPlanInfo | null>(null);
   const trialSectionRef = useRef<HTMLDivElement>(null);
   const [selectedTrial, setSelectedTrial] = useState<'sprouts' | 'oats' | 'navaratri'>('sprouts');
+  const [showContestInfoModal, setShowContestInfoModal] = useState(false);
   const [showEggCounterModal, setShowEggCounterModal] = useState(false);
   const [extraEggCount, setExtraEggCount] = useState(0);
   const [navaratriWithEgg, setNavaratriWithEgg] = useState(false);
@@ -267,8 +269,8 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                         <div className="absolute -left-12 -top-12 w-36 h-36 rounded-full bg-white/10"></div>
                         <div className="absolute -right-8 -bottom-8 w-24 h-24 rounded-full bg-white/10"></div>
                         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center z-10">Win a contest and earn a free juice of your choice!</h3>
-                        <Button asChild size="lg" className="bg-white/90 text-blue-600 hover:bg-white z-10 shadow-lg">
-                          <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_placeholder_form_id/viewform" target="_blank" rel="noopener noreferrer">Enroll Now</a>
+                        <Button size="lg" className="bg-white/90 text-blue-600 hover:bg-white z-10 shadow-lg" onClick={() => setShowContestInfoModal(true)}>
+                          Enroll Now
                         </Button>
                       </div>
                     </div>
@@ -319,6 +321,12 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
         isOpen={showCheckoutDialog}
         onClose={() => setShowCheckoutDialog(false)}
         planInfo={checkoutPlanInfo}
+      />
+
+      {/* Contest Info Modal */}
+      <ContestInfoModal 
+        isOpen={showContestInfoModal}
+        onClose={() => setShowContestInfoModal(false)}
       />
 
       {/* Juice Selection Modal */}

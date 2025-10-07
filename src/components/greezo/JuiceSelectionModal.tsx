@@ -50,9 +50,9 @@ const ALL_JUICES = [
 
 const FRESH_JUICES = [
   { name: "Grapes Juice", image: "/images/fresh-juices/grapes-juice.png", description: "Rich & antioxidant-packed" },
-  { name: "Apple Smoothie", image: "/images/fresh-juices/apple-smoothie.png", description: "Creamy & wholesome" },
-  { name: "Pineapple Juice", image: "/images/fresh-juices/pineapple-juice.png", description: "Sweet & tangy tropical boost" },
   { name: "Banana Dates Smoothie", image: "/images/fresh-juices/banana-dates-smoothie.png", description: "Natural energy & sweetness" },
+  { name: "Pineapple Juice", image: "/images/fresh-juices/pineapple-juice.png", description: "Sweet & tangy tropical boost" },
+  { name: "Apple Smoothie", image: "/images/fresh-juices/apple-smoothie.png", description: "Creamy & wholesome" },
   { name: "Lime Chia Juice", image: "/images/fresh-juices/lime-chia-juice.png", description: "Zesty with a fiber kick" },
   { name: "Tender Coconut", image: "/images/fresh-juices/tender-coconut.png", description: "Pure, hydrating electrolyte" },
 ];
@@ -232,7 +232,7 @@ export function JuiceSelectionModal({
                   <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 49}</span></p>
                 </div>
                 {initialJuicePrice === 29 && (
-                  <p className="text-xs text-green-600 font-semibold">With the combo offer, you can select up to 2 juices!</p>
+                  <p className="text-xs text-green-600 font-semibold">This plan includes 2 juices. Select one, and we'll deliver two of the same!</p>
                 )}
                 <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
               </div>

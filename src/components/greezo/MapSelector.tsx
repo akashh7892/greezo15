@@ -1164,7 +1164,7 @@ export function MapSelector({ onAddressSelect, onClose }: MapSelectorProps) {
           </Button>
           <Button 
             variant="outline" 
-            onClick={getCurrentLocation} 
+            onClick={() => getCurrentLocation()} 
             disabled={isLoadingCurrentLocation || isLoading}
             aria-label="Use current location"
             className="flex items-center gap-2"
