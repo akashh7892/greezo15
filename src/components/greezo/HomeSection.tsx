@@ -327,7 +327,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
         onClose={() => setShowJuiceSelection(false)}
         onSelect={handleJuiceSelection}
         planType={'trial'}
-        juicePrice={selectedTrial === 'navaratri' ? 19 : 9}
+        juicePrice={selectedTrial === 'navaratri' ? 29 : 9} // This is for a single juice
       />
 
       {/* Egg Add-on Modal */}
@@ -336,7 +336,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
               <Egg className="h-7 w-7 text-yellow-500" />
-              <span>Add Extra Protein?</span>
+              <span>Add Extra Protein? (for Navaratri Combo)</span>
             </DialogTitle>
           </DialogHeader>
           <div className="py-6 text-center">
@@ -346,7 +346,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 <p className="text-sm">Boost your trial meal with a high-quality protein source for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span>.</p>
               </div>
             ) : (
-              <p className="text-muted-foreground mb-6">Boost your salads with extra boiled eggs for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span> each.</p>
+              <p className="text-muted-foreground mb-6">Boost your combo salads with extra boiled eggs for just <span className="font-bold text-primary font-rupees rupee-symbol">₹12</span> each.</p>
             )}
             <div className="flex items-center justify-center gap-4 mb-6">
               <Button size="icon" variant="outline" onClick={() => setExtraEggCount(Math.max(0, extraEggCount - 1))} disabled={extraEggCount === 0}>

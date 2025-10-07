@@ -33,16 +33,16 @@ const plans: Plan[] = [
 const eggMealImages = [
   "/images/meals/mix.png",     // Monday - Mix Sprouts Salad
   "/images/meals/corn.png",    // Tuesday - Corn Salad  
-  "/images/meals/soya.png",    // Wednesday - Soya Salad
+  "/images/meals/oats.png",    // Wednesday - Muesli Oats
   "/images/meals/kabul.png",   // Thursday - Kabul Salad
   "/images/meals/rajma.png",   // Friday - Rajma Salad
   "/images/meals/paneer.png"   // Saturday - Paneer Salad
 ];
 
 const nonEggMealImages = [
-  "/images/non-egg/MIX veg.png",    // Monday - Mix Sprouts Salad
+  "/vegimages/MIX veg.png",    // Monday - Mix Sprouts Salad
   "/images/non-egg/corn veg.png",   // Tuesday - Corn Salad
-  "/images/non-egg/soya veg.png",   // Wednesday - Soya Salad  
+  "/images/meals/oats.png",   // Wednesday - Muesli Oats
   "/images/non-egg/kabul veg.png",  // Thursday - Kabul Salad
   "/images/non-egg/rajma veg.png",  // Friday - Rajma Salad
   "/images/non-egg/paneer veg.png"  // Saturday - Paneer Salad
@@ -65,10 +65,10 @@ const mealData = [
   },
   {
     day: "Wednesday",
-    name: "Soya Salad", 
-    eggIngredients: ["Boiled Soya with veggies (1 cup)", "Boiled Egg", "Pears chunks", "Plums", "Nuts"],
-    nonEggIngredients: ["Boiled Soya with veggies (1 cup)", "Banana", "Pears chunks", "Plums", "Nuts"],
-    protein: "40g"
+    name: "Fruits pop Muesli", 
+    eggIngredients: ["Muesli (1 cup)", "Mixed Berries", "Milk", "Honey","Banana Slices","Apple Slices","Pomogranate"],
+    nonEggIngredients: ["Muesli (1 cup)", "Mixed Berries", "Yogurt", "Honey", "Chia Seeds"],
+    protein: "12g"
   },
   {
     day: "Thursday",

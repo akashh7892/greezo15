@@ -81,8 +81,7 @@ export function JuiceSelectionModal({
 
   const handleJuiceToggle = (juiceName: string, price: number) => {
     if (planType === 'trial') {
-      // For trial, only one selection allowed
-      setSelectedJuices([juiceName]);
+      setSelectedJuices(prev => (prev[0] === juiceName ? [] : [juiceName]));
       // We'll pass the price back through the onSelect function
     } else {
       // For subscriptions, multiple selections
@@ -98,12 +97,16 @@ export function JuiceSelectionModal({
     if (planType === 'subscription') {
       onSelect(healthyJuiceAdded, freshJuiceAdded);
     } else {
-      // For trial, determine which pack was selected to pass the correct price
-      const isHealthy = TRIAL_HEALTHY_JUICES.some(j => j.name === selectedJuices[0]);
-      if (isHealthy) {
-        onSelect(true, false, selectedJuices, 9);
+      if (selectedJuices.length > 0) {
+        // For trial, determine which pack was selected to pass the correct price
+        const isHealthy = TRIAL_HEALTHY_JUICES.some(j => j.name === selectedJuices[0]);
+        if (isHealthy) {
+          onSelect(true, false, selectedJuices, initialJuicePrice);
+        } else {
+          onSelect(false, true, selectedJuices, initialJuicePrice === 29 ? 59 : 25);
+        }
       } else {
-        onSelect(false, true, selectedJuices, 25);
+        onSelect(false, false, [], 0); // No juice selected
       }
     }
     onClose();
@@ -148,7 +151,7 @@ export function JuiceSelectionModal({
             <div className="flex-grow overflow-y-auto -mx-6 px-6 space-y-6 pb-4 pr-2">
               {/* Healthy Juices Section */}
               <div className="space-y-3">
-                <h3 className="font-bold text-lg text-center">Healthy Juice Pack</h3>
+                <h3 className="font-bold text-lg text-center">Immunity Booster Pack</h3>
                 <div className="grid grid-cols-3 gap-3">
                   {ALL_JUICES.map(juice => (
                     <Card key={juice.name} className="overflow-hidden rounded-lg border-border/50 shadow-sm flex flex-col">
@@ -167,8 +170,8 @@ export function JuiceSelectionModal({
                   <p className="text-sm line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹559</span></p>
                 </div>
                 <p className="text-xs text-muted-foreground">One juice per day for 6 days.</p> 
-                <Button size="sm" variant={healthyJuiceAdded ? "secondary" : "default"} className={`w-full mt-1 ${healthyJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => handleHealthyJuiceInteraction(!healthyJuiceAdded)}>
-                  {healthyJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add Healthy Juice Pack"}
+                <Button size="sm" variant={healthyJuiceAdded ? "secondary" : "default"} className={`w-auto mt-1 ${healthyJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => handleHealthyJuiceInteraction(!healthyJuiceAdded)}>
+                  {healthyJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add to cart"}
                 </Button>
                 <Button variant="link" size="sm" className="text-xs h-auto py-1 text-muted-foreground" onClick={() => scrollToFreshJuices()}>
                   No, thanks
@@ -178,7 +181,7 @@ export function JuiceSelectionModal({
 
               {/* Fresh Juices Section */}
               <div className="space-y-3" ref={freshJuiceSectionRef} style={{scrollMarginTop: '100px'}}>
-                <h3 className="font-bold text-lg text-center">Fresh Juice Pack</h3>
+                <h3 className="font-bold text-lg text-center">Pure Glow Pack</h3>
                 <div className="grid grid-cols-3 gap-3">
                   {FRESH_JUICES.map(juice => (
                     <Card key={juice.name} className="overflow-hidden rounded-lg border-border/50 shadow-sm flex flex-col">
@@ -197,8 +200,8 @@ export function JuiceSelectionModal({
                     <p className="text-sm line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹659</span></p>
                   </div>
                   <p className="text-xs text-muted-foreground">One juice per day for 6 days.</p>
-                  <Button size="sm" variant={freshJuiceAdded ? "secondary" : "default"} className={`w-full mt-1 ${freshJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => setFreshJuiceAdded(!freshJuiceAdded)}>
-                    {freshJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add Fresh Juice Pack"}
+                  <Button size="sm" variant={freshJuiceAdded ? "secondary" : "default"} className={`w-auto mt-1 ${freshJuiceAdded ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-500 hover:bg-yellow-600'}`} onClick={() => setFreshJuiceAdded(!freshJuiceAdded)}>
+                    {freshJuiceAdded ? <><Check className="mr-2 h-4 w-4" /> Added</> : "Add to cart"}
                   </Button>
                 </div>
               </div>
@@ -225,9 +228,12 @@ export function JuiceSelectionModal({
             <div className="space-y-3">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹9</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹49</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 49}</span></p>
                 </div>
+                {initialJuicePrice === 29 && (
+                  <p className="text-xs text-green-600 font-semibold">With the combo offer, you can select up to 2 juices!</p>
+                )}
                 <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
               </div>
               <div className="grid grid-cols-3 gap-2">
@@ -237,7 +243,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, 9)}
+                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
@@ -259,8 +265,8 @@ export function JuiceSelectionModal({
             <div className="space-y-3 pt-4 border-t">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹25</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹99</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 59 : 25}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 129 : 99}</span></p>
                 </div>
                 <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
               </div>
@@ -271,7 +277,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, 25)}
+                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 59 : 25)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
