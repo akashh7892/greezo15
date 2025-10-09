@@ -23,9 +23,9 @@ type HomeSectionProps = {
 };
 
 const sliderImages = [
-  { src: "/images/splash/offer.png", alt: "Limited offer - Sprouts salad ₹69 plus lime mint juice ₹9", hint: "special offer promotion" },
-  { src: "/images/splash/delivery-new.jpg", alt: "Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
-  { src: "/images/splash/packaging.png", alt: "Plastic free package - Eco-friendly bagasse trays", hint: "eco-friendly packaging" },
+  { src: "/images/splash/offer.png", alt: " Greezo offer Limited offer - Sprouts salad ₹69 plus lime mint juice ₹9", hint: "special offer promotion" },
+  { src: "/images/splash/delivery-new.jpg", alt: " Greezo delivery Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
+  { src: "/images/splash/packaging.png", alt: "Greezo package Plastic free package - Eco-friendly bagasse trays", hint: "eco-friendly packaging" },
 ];
 
 export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
@@ -126,9 +126,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-primary leading-tight mb-4">
-              Welcome to Greezo
-            </h1>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-primary leading-tight mb-4">Welcome to Greezo</h1>
             <p className="text-xl sm:text-2xl text-muted-foreground mb-8">
               Fresh, Natural & Healthy Meals, Delivered.
             </p>
@@ -221,8 +219,8 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 FLAT <span className="font-rupees rupee-symbol"></span>50% OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
-                <Image src={"/images/meals/oats.png"} alt={`Fruits pop Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
-                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits pop Muesli (Trial)</h3>
+                <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
+                <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits Muesli bowl (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
                   <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹89</span>
                   <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹179</span>

@@ -65,7 +65,7 @@ const mealData = [
   },
   {
     day: "Wednesday",
-    name: "Fruits pop Muesli", 
+    name: "Fruits Muesli bowl", 
     eggIngredients: ["Muesli (1 cup)", "Mixed Berries", "Milk", "Honey","Banana Slices","Apple Slices","Pomogranate"],
     nonEggIngredients: ["Muesli (1 cup)", "Mixed Berries", "Yogurt", "Honey", "Chia Seeds"],
     protein: "12g"

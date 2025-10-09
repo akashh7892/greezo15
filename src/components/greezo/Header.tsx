@@ -1,6 +1,7 @@
 
 "use client";
 
+import Image from 'next/image';
 import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -27,24 +28,26 @@ export function Header({ scrollToSection, hasEgg, setHasEgg }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <div 
-            className="flex items-center gap-2 cursor-pointer group"
-            onClick={() => scrollToSection('home')}
-          >
-            <span className="text-xl font-headline font-bold text-primary">Greezo</span>
+          <div className="flex items-center gap-8">
+            <div 
+              className="flex items-center gap-2 cursor-pointer group"
+              onClick={() => scrollToSection('home')}
+            >
+              <Image src="/images/greezo-logo.png" alt="Greezo Logo" width={120} height={60} className="rounded-md object-contain" />
+            </div>
+            <nav className="hidden md:flex items-center gap-2">
+              {navLinks.map((link) => (
+                <Button
+                  key={link.name}
+                  variant="ghost"
+                  className="font-semibold"
+                  onClick={() => scrollToSection(link.section)}
+                >
+                  {link.name}
+                </Button>
+              ))}
+            </nav>
           </div>
-          <nav className="hidden md:flex items-center gap-2">
-            {navLinks.map((link) => (
-              <Button
-                key={link.name}
-                variant="ghost"
-                className="font-semibold"
-                onClick={() => scrollToSection(link.section)}
-              >
-                {link.name}
-              </Button>
-            ))}
-          </nav>
           <div className="flex items-center gap-4">
             {/* Egg/Non-Egg Toggle */}
             <div className="flex items-center space-x-2">
