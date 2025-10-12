@@ -48,6 +48,17 @@ export function AboutSection() {
             </p><p className="text-lg text-muted-foreground leading-relaxed mt-4 text-left md:text-center">
               Our chefs use only the highest quality ingredients, sourced locally whenever possible, to create a rotating menu that's as exciting as it is wholesome. Join the Greezo family and rediscover the joy of eating well.
             </p>
+            <div className="mt-8 pt-8 border-t border-primary/20">
+              <h3 className="text-2xl font-headline font-bold text-primary mb-4">OUR LOCATION (Cloud Kitchen)</h3>
+              <p className="text-lg text-muted-foreground leading-relaxed text-left md:text-center">
+                Here we are preparing our products. Check out the details below:
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed mt-2 text-left md:text-center">
+                <strong>Location:</strong> Leetu's Kitchen,Kadubeesanahalli,Bengaluru
+                <br />
+                <a href="https://www.google.com/maps/search/?api=1&query=Leetu's+Kitchen(Cloud+Kitchen),+Kadubeesanahalli,+Bengaluru" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View on Google Maps</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
