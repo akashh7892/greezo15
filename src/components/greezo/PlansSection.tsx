@@ -119,11 +119,6 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
   
   const { toast } = useToast();
 
-  const getCurrentMealImages = () => {
-    const mealImages = hasEgg ? eggMealImages : nonEggMealImages;
-    return mealImages; // Return exactly 6 unique images, no repetition
-  };
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -147,14 +142,19 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
     };
   }, []);
 
-  const handleDismissHint = () => {
-    setShowViewDetailsHint(false);
-    hintDismissed.current = true;
+  // Returns the correct meal image array based on the hasEgg prop
+  const getCurrentMealImages = () => {
+    return hasEgg ? eggMealImages : nonEggMealImages;
   };
 
   const handleSelectPlan = (plan: Plan) => {
     setSelectedPlan(plan);
     setShowJuiceSelectionModal(true);
+  };
+  
+  const handleDismissHint = () => {
+    setShowViewDetailsHint(false);
+    hintDismissed.current = true;
   };
 
   const handleJuiceSelectionFromModal = (healthySelected: boolean, freshSelected: boolean) => {
@@ -187,12 +187,12 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
     return plans
       .filter(p => p.type === type)
       .map((plan, index) => (
-        <Card 
-          key={plan.id} 
-          className="group animate-in fade-in-50 slide-in-from-bottom-4 overflow-hidden rounded-2xl border-2 border-transparent bg-white shadow-lg transition-all duration-300 hover:border-primary hover:shadow-2xl hover:-translate-y-2"
-          style={{ animationDelay: `${index * 100}ms` }}
-        >
-          <Collapsible>
+        <div key={plan.id} className="relative">
+          <Card 
+            className="group animate-in fade-in-50 slide-in-from-bottom-4 overflow-hidden rounded-2xl border-2 border-transparent bg-white shadow-lg transition-all duration-300 hover:border-primary hover:shadow-2xl hover:-translate-y-2"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <Collapsible>
             <CardHeader className="p-6">
               <CardTitle className="text-2xl font-bold text-gray-800">{plan.name}</CardTitle>
               <div className="flex items-baseline gap-2 pt-2">
@@ -200,21 +200,8 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
                 <span className="text-lg line-through text-muted-foreground font-rupees rupee-symbol">₹{plan.originalPrice.toLocaleString()}</span>
               </div>
             </CardHeader>
-            <CardFooter className="flex justify-between items-center p-6 bg-slate-50/70 relative">
-              {showViewDetailsHint && (plan.id === 'w-basic' || plan.id === 'm-basic') && (
-                <div className="absolute -top-20 left-4 w-max max-w-xs p-3 bg-primary text-primary-foreground text-sm rounded-md shadow-lg z-10 animate-scale-in-pop flex flex-col items-center gap-2">
-                  <p className="text-center flex items-center gap-1"><Hand className="h-4 w-4" /> View our product by clicking here</p>
-                  <Button 
-                    size="sm" 
-                    variant="secondary" 
-                    className="h-6 px-2 text-xs bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
-                    onClick={handleDismissHint}>
-                    Ok
-                  </Button>
-                  <div className="absolute -bottom-2 left-8 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-primary"></div>
-                </div>
-              )}
-              <CollapsibleTrigger asChild >
+            <CardFooter className="flex justify-between items-center p-6 bg-slate-50/70">
+              <CollapsibleTrigger asChild>
                 <Button variant="ghost" disabled={plan.isComingSoon} className="text-primary hover:bg-primary/10">View Details</Button>
               </CollapsibleTrigger>
               {plan.isComingSoon ? (
@@ -230,7 +217,7 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
                 <h3 className="text-xl font-bold mb-4 text-center text-primary">What's in the plan:</h3>
                 <Carousel className="w-full" opts={{ align: "start", loop: true }}>
                   <CarouselContent className="-ml-4">
-                    {mealData.map((meal, index) => (
+                    {mealData.map((meal, index) => ( 
                       <CarouselItem key={meal.day} className="pl-4 basis-5/6">
                         <div className="p-1">
                           <Card className="flex flex-col overflow-hidden h-full rounded-xl border-border/50">
@@ -255,8 +242,22 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
                 </Carousel>
               </div>
             </CollapsibleContent>
-          </Collapsible>
-        </Card>
+            </Collapsible>
+          </Card>
+          {showViewDetailsHint && (plan.id === 'w-basic' || plan.id === 'm-basic') && (
+            <div className="absolute top-full mt-2 left-4 w-max max-w-xs p-3 bg-primary text-primary-foreground text-sm rounded-md shadow-lg z-10 animate-in fade-in-50 slide-in-from-top-4 flex flex-col items-center gap-2">
+              <p className="text-center flex items-center gap-1"><Hand className="h-4 w-4" /> View our product by clicking here</p>
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="h-6 px-2 text-xs bg-primary-foreground/20 hover:bg-primary-foreground/30 text-primary-foreground"
+                onClick={handleDismissHint}>
+                Ok
+              </Button>
+              <div className="absolute -top-2 left-8 w-0 h-0 border-x-8 border-x-transparent border-b-8 border-b-primary"></div>
+            </div>
+          )}
+        </div>
       ));
   };
 
