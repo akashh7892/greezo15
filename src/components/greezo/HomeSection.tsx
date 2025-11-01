@@ -286,7 +286,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Navaratri Offer Card */}
             <div className="col-span-2 mt-8">
               <Card className="shadow-xl border-2 border-yellow-500/50 relative overflow-hidden bg-gradient-to-tr from-yellow-50 to-orange-50">
-                <div className="absolute top-0 right-0 bg-gradient-to-br from-pink-500 to-red-500 text-white text-xs font-bold px-4 py-1 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">Diwali Offer</div>
+                <div className="absolute top-0 right-0 bg-gradient-to-br from-pink-500 to-red-500 text-white text-xs font-bold px-4 py-1 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">ಕನ್ನಡ ರಾಜ್ಯೋತ್ಸವದ ಆಫರ್</div>
                 <CardContent className="p-4 sm:p-6">
                   <div className="grid grid-cols-2 gap-4 items-center">
                     <div className="text-center sm:text-left col-span-1">
