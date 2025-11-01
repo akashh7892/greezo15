@@ -73,6 +73,11 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
       return true;
     }
 
+    // Disable Sundays
+    if (date.getDay() === 0) {
+      return true;
+    }
+
     return false;
   };
 
@@ -110,11 +115,15 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
   useEffect(() => {
     if (isOpen) {
       const now = new Date();
-      let initialDate;
+      let initialDate = new Date(now);
+
+      // If today is Sunday, default to Monday
+      if (initialDate.getDay() === 0) {
+        initialDate.setDate(initialDate.getDate() + 1);
+      }
+
       if (planInfo?.type === 'trial' && now.getHours() >= 17) {
-        initialDate = new Date(new Date().setDate(now.getDate() + 1));
-      } else {
-        initialDate = now;
+        initialDate = new Date(now.setDate(now.getDate() + 1));
       }
       setSelectedDate(initialDate);
     } else {
@@ -306,6 +315,15 @@ ${planInfo.juiceAdded && planInfo.selectedJuices.length > 0 ? `*Selected Juice(s
                       mode="single"
                       selected={selectedDate}
                       onSelect={(date) => {
+                        if (date && date.getDay() === 0) {
+                          toast({
+                            title: "Sunday not available",
+                            description: "Sorry, we do not deliver on Sundays.",
+                            variant: "destructive",
+                          });
+                          setDatePickerOpen(true); // Keep picker open
+                          return;
+                        }
                         setSelectedDate(date);
                         setDatePickerOpen(false);
                         setPreferredShift(''); // Reset shift when date changes
