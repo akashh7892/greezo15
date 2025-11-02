@@ -47,6 +47,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
     if (hasEgg) {
       setShowToggleHint(true);
     } else {
+      setExtraEggCount(0);
       // Immediately hide hint if user switches to veg mode
       setShowToggleHint(false);
     }
