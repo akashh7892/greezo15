@@ -66,13 +66,13 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
     setShowJuiceSelection(false);
     let planName = 'Muesli Oats - Trial';
     let planHasEgg = false; // Oats doesn't have an egg option
-    let price = 89;
+    let price = 129;
     let finalHasEgg = hasEgg;
     let finalJuicePrice = juicePrice !== undefined ? juicePrice : 25;
 
     if (selectedTrial === 'sprouts') {
       planName = 'Mixed Sprout Salad - Trial';
-      price = 69;
+      price = 89;
       planHasEgg = hasEgg || extraEggCount > 0;
     } else if (selectedTrial === 'navaratri') {
       planName = 'Navaratri Offer - 2 Salads';
@@ -223,7 +223,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits Muesli bowl (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
-                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹89</span>
+                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹129</span>
                   <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹179</span>
                 </div>
                 <Button 
