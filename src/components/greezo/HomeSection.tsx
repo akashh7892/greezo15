@@ -68,7 +68,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
     let planHasEgg = false; // Oats doesn't have an egg option
     let price = 89;
     let finalHasEgg = hasEgg;
-    let finalJuicePrice = juicePrice !== undefined ? juicePrice : 9;
+    let finalJuicePrice = juicePrice !== undefined ? juicePrice : 25;
 
     if (selectedTrial === 'sprouts') {
       planName = 'Mixed Sprout Salad - Trial';
@@ -79,7 +79,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       price = 129;
       planHasEgg = extraEggCount > 0;
       finalHasEgg = hasEgg || extraEggCount > 0;
-      finalJuicePrice = juicePrice !== undefined ? juicePrice : 19; // Special juice price for combo
+      finalJuicePrice = juicePrice !== undefined ? juicePrice : 45; // Special juice price for combo
     }
 
     const juiceAdded = healthySelected || freshSelected;
