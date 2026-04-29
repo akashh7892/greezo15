@@ -24,7 +24,7 @@ type HomeSectionProps = {
 
 const sliderImages = [
   { src: "/images/splash/offer.png", alt: " Greezo offer Limited offer - Sprouts salad ₹89 plus lime mint juice ₹9", hint: "special offer promotion" },
-  { src: "/images/splash/delivery-new.jpg", alt: " Greezo delivery Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
+  { src: "/images/splash/delivery-new.png", alt: " Greezo delivery Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
   { src: "/images/splash/packaging.png", alt: "Greezo package Plastic free package - Eco-friendly bagasse trays", hint: "eco-friendly packaging" },
 ];
 
