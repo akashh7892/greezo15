@@ -295,7 +295,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                       <p className="text-xs sm:text-base text-muted-foreground mb-2 sm:mb-4">Get a delicious combo of two Mixed Sprout Salad </p>
                       <div className="flex items-baseline justify-center sm:justify-start gap-2 mb-3 sm:mb-4">
                         <span className="text-2xl sm:text-4xl font-bold text-black font-rupees rupee-symbol">₹189</span>
-                        <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹258</span>
+                        <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹298</span>
                       </div>
                       <Button 
                         size="sm" 
