@@ -196,7 +196,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Sprouts Trial Card - relative positioning for hint */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">              
               <div className="absolute top-0 right-0 bg-gradient-to-br from-red-500 to-orange-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol">₹</span>50 OFFER
+                FLAT <span className="font-rupees rupee-symbol"></span>LIMITED OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
@@ -217,7 +217,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Oats Trial Card */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-teal-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol"></span>%50 OFFER
+                FLAT <span className="font-rupees rupee-symbol"></span>limited OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
@@ -287,7 +287,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Navaratri Offer Card */}
             <div className="col-span-2 mt-8">
               <Card className="shadow-xl border-2 border-yellow-500/50 relative overflow-hidden bg-gradient-to-tr from-yellow-50 to-orange-50">
-                <div className="absolute top-0 right-0 bg-gradient-to-br from-pink-500 to-red-500 text-white text-xs font-bold px-4 py-1 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">ಕನ್ನಡ ರಾಜ್ಯೋತ್ಸವದ ಆಫರ್</div>
+                <div className="absolute top-0 right-0 bg-gradient-to-br from-pink-500 to-red-500 text-white text-xs font-bold px-4 py-1 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">LIMITED OFFER</div>
                 <CardContent className="p-4 sm:p-6">
                   <div className="grid grid-cols-2 gap-4 items-center">
                     <div className="text-center sm:text-left col-span-1">
