@@ -66,7 +66,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
     setShowJuiceSelection(false);
     let planName = 'Muesli Oats - Trial';
     let planHasEgg = false; // Oats doesn't have an egg option
-    let price = 129;
+    let price = 149;
     let finalHasEgg = hasEgg;
     let finalJuicePrice = juicePrice !== undefined ? juicePrice : 25;
 
@@ -76,7 +76,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       planHasEgg = hasEgg || extraEggCount > 0;
     } else if (selectedTrial === 'navaratri') {
       planName = 'Navaratri Offer - 2 Salads';
-      price = 169;
+      price = 189;
       planHasEgg = extraEggCount > 0;
       finalHasEgg = hasEgg || extraEggCount > 0;
       finalJuicePrice = juicePrice !== undefined ? juicePrice : 45; // Special juice price for combo
@@ -202,7 +202,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Mixed Sprout Salad (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹99</span>
-                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹249</span>
+                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹149</span>
                 </div>
                 <Button 
                   size="sm"
@@ -217,14 +217,14 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Oats Trial Card */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-teal-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol"></span>50% OFFER
+                FLAT <span className="font-rupees rupee-symbol"></span>%50 OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits Muesli bowl (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
                   <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹149</span>
-                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹199</span>
+                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹279</span>
                 </div>
                 <Button 
                   size="sm" 
@@ -294,7 +294,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                       <h3 className="text-lg sm:text-3xl font-headline font-bold text-primary mb-1 sm:mb-2">Two Salads, One Great Price!</h3>
                       <p className="text-xs sm:text-base text-muted-foreground mb-2 sm:mb-4">Get a delicious combo of two Mixed Sprout Salad </p>
                       <div className="flex items-baseline justify-center sm:justify-start gap-2 mb-3 sm:mb-4">
-                        <span className="text-2xl sm:text-4xl font-bold text-black font-rupees rupee-symbol">₹169</span>
+                        <span className="text-2xl sm:text-4xl font-bold text-black font-rupees rupee-symbol">₹189</span>
                         <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹258</span>
                       </div>
                       <Button 
