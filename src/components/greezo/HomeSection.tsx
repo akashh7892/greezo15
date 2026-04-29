@@ -358,6 +358,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             <div className="flex items-center justify-center gap-4 mb-6">
               <Button size="icon" variant="outline" onClick={() => setExtraEggCount(Math.max(0, extraEggCount - 1))} disabled={extraEggCount === 0}>
                 <Minus className="h-4 w-4" />
+                
               </Button>
               <span className="text-xl font-bold w-36 text-center whitespace-nowrap">
                 {extraEggCount > 0 ? `Added ${extraEggCount} egg${extraEggCount > 1 ? 's' : ''}` : 'No eggs'}
