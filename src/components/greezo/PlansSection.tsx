@@ -27,6 +27,7 @@ const plans: Plan[] = [
   { id: 'w-pro', name: 'Pro Weekly Plan', price: 1399, originalPrice: 1999, type: 'weekly', isComingSoon: true },
   { id: 'm-basic', name: 'Basic Monthly Plan', price: 2999, originalPrice: 4000, type: 'monthly' },
   { id: 'm-pro', name: 'Pro Monthly Plan', price: 4499, originalPrice: 5999, type: 'monthly', isComingSoon: true },
+  { id: 'm-muesli', name: 'Monthly Muesli Plan', price: 2999, originalPrice: 4000, type: 'monthly' },
 ];
 
 // Monday to Saturday sequence
@@ -148,6 +149,7 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
   };
 
   const handleSelectPlan = (plan: Plan) => {
+    // Show the juice selection modal before proceeding to checkout.
     setSelectedPlan(plan);
     setShowJuiceSelectionModal(true);
   };
@@ -186,8 +188,12 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
   const renderPlans = (type: 'weekly' | 'monthly') => {
     return plans
       .filter(p => p.type === type)
-      .map((plan, index) => (
-        <div key={plan.id} className="relative">
+      .map((plan, index) => {
+        // Show "View Details" for weekly plans and the basic monthly plan
+        const showDetailsButton = plan.type === 'weekly' || plan.id === 'm-basic';
+
+        return (
+          <div key={plan.id} className="relative">
           <Card 
             className="group animate-in fade-in-50 slide-in-from-bottom-4 overflow-hidden rounded-2xl border-2 border-transparent bg-white shadow-lg transition-all duration-300 hover:border-primary hover:shadow-2xl hover:-translate-y-2"
             style={{ animationDelay: `${index * 100}ms` }}
@@ -200,16 +206,24 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
                 <span className="text-lg line-through text-muted-foreground font-rupees rupee-symbol">₹{plan.originalPrice.toLocaleString()}</span>
               </div>
             </CardHeader>
-            <CardFooter className="flex justify-between items-center p-6 bg-slate-50/70">
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" disabled={plan.isComingSoon} className="text-primary hover:bg-primary/10">View Details</Button>
-              </CollapsibleTrigger>
+            <CardFooter className={`flex items-center p-6 bg-slate-50/70 ${showDetailsButton ? 'justify-between' : 'justify-center'}`}>
+              {showDetailsButton && (
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" disabled={plan.isComingSoon} className="text-primary hover:bg-primary/10">View Details</Button>
+                </CollapsibleTrigger>
+              )}
               {plan.isComingSoon ? (
                 <Button disabled className="w-1/2 cursor-not-allowed bg-gray-300">
                   Coming Soon
                 </Button>
               ) : (
-                <Button onClick={() => handleSelectPlan(plan)} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-md hover:shadow-lg transition-shadow">Add to Cart</Button>
+                <Button 
+                  onClick={() => handleSelectPlan(plan)} 
+                  size="lg" 
+                  className={`bg-accent text-accent-foreground hover:bg-accent/90 shadow-md hover:shadow-lg transition-shadow ${!showDetailsButton ? 'w-full' : ''}`}
+                >
+                  Add to Cart
+                </Button>
               )}
             </CardFooter>
             <CollapsibleContent className="p-6 pt-4">
@@ -258,7 +272,8 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
             </div>
           )}
         </div>
-      ));
+        );
+      });
   };
 
   return (
