@@ -334,7 +334,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
         onClose={() => setShowJuiceSelection(false)}
         onSelect={handleJuiceSelection}
         planType={'trial'}
-        juicePrice={selectedTrial === 'navaratri' ? 29 : 9} // This is for a single juice
+        juicePrice={selectedTrial === 'navaratri' ? 49 : 49} // This is for a single juice
       />
 
       {/* Egg Add-on Modal */}
@@ -375,7 +375,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 disabled={extraEggCount === 0}
               >
                   <span>
-                    Continue (+ <span className="font-rupees rupee-symbol">₹</span>{extraEggCount * 12})
+                    Continue (+ <span className="font-rupees rupee-symbol">₹</span>{extraEggCount * 14})
                   </span>
               </Button>
               <Button variant="outline" className="w-full" onClick={handleEggCounterConfirm}>No thanks, proceed to next</Button>
