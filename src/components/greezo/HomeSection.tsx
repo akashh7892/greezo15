@@ -76,7 +76,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       planHasEgg = hasEgg || extraEggCount > 0;
     } else if (selectedTrial === 'navaratri') {
       planName = 'Navaratri Offer - 2 Salads';
-      price = 129;
+      price = 169;
       planHasEgg = extraEggCount > 0;
       finalHasEgg = hasEgg || extraEggCount > 0;
       finalJuicePrice = juicePrice !== undefined ? juicePrice : 45; // Special juice price for combo
@@ -294,7 +294,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                       <h3 className="text-lg sm:text-3xl font-headline font-bold text-primary mb-1 sm:mb-2">Two Salads, One Great Price!</h3>
                       <p className="text-xs sm:text-base text-muted-foreground mb-2 sm:mb-4">Get a delicious combo of two Mixed Sprout Salad </p>
                       <div className="flex items-baseline justify-center sm:justify-start gap-2 mb-3 sm:mb-4">
-                        <span className="text-2xl sm:text-4xl font-bold text-black font-rupees rupee-symbol">₹129</span>
+                        <span className="text-2xl sm:text-4xl font-bold text-black font-rupees rupee-symbol">₹169</span>
                         <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹258</span>
                       </div>
                       <Button 
