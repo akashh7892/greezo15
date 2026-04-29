@@ -72,7 +72,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
 
     if (selectedTrial === 'sprouts') {
       planName = 'Mixed Sprout Salad - Trial';
-      price = 89;
+      price = 99;
       planHasEgg = hasEgg || extraEggCount > 0;
     } else if (selectedTrial === 'navaratri') {
       planName = 'Navaratri Offer - 2 Salads';
@@ -201,8 +201,8 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Mixed Sprout Salad (Trial)</h3>
-                <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹89</span>
-                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹149</span>
+                <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹99</span>
+                  <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹249</span>
                 </div>
                 <Button 
                   size="sm"
@@ -223,7 +223,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
                 <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Fruits Muesli bowl (Trial)</h3>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
-                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹129</span>
+                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹149</span>
                   <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹199</span>
                 </div>
                 <Button 
