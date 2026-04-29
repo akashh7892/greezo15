@@ -196,7 +196,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Sprouts Trial Card - relative positioning for hint */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">              
               <div className="absolute top-0 right-0 bg-gradient-to-br from-red-500 to-orange-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol"></span>LIMITED OFFER
+                 <span className="font-rupees rupee-symbol"></span>LIMITED OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
@@ -217,7 +217,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
             {/* Oats Trial Card */}
             <Card className="shadow-lg border-2 border-primary/20 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-teal-400 text-white text-xs font-bold px-4 py-2 transform translate-x-4 translate-y-4 rotate-45 shadow-lg z-10 animate-pulse">
-                FLAT <span className="font-rupees rupee-symbol"></span>limited OFFER
+                 <span className="font-rupees rupee-symbol"></span>limited OFFER
               </div>
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={"/images/meals/oats.png"} alt={`Fruits Muesli - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
