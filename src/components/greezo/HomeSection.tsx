@@ -23,7 +23,7 @@ type HomeSectionProps = {
 };
 
 const sliderImages = [
-  { src: "/images/splash/offer.png", alt: " Greezo offer Limited offer - Sprouts salad ₹69 plus lime mint juice ₹9", hint: "special offer promotion" },
+  { src: "/images/splash/offer.png", alt: " Greezo offer Limited offer - Sprouts salad ₹89 plus lime mint juice ₹9", hint: "special offer promotion" },
   { src: "/images/splash/delivery-new.jpg", alt: " Greezo delivery Now delivering in Marathahalli & Whitefield - Healthy choices made easy", hint: "delivery area announcement" },
   { src: "/images/splash/packaging.png", alt: "Greezo package Plastic free package - Eco-friendly bagasse trays", hint: "eco-friendly packaging" },
 ];
@@ -201,7 +201,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
               <CardContent className="p-2 sm:p-4 text-center">
                 <Image src={hasEgg ? "/images/meals/mix.png" : "/vegimages/MIX veg.png"} alt={`Mixed ${hasEgg ? 'Egg' : 'Veg'} Meal - Trial Offer`} data-ai-hint="trial meal box" width={150} height={112} className="rounded-lg mb-2 mx-auto" />
                 <h3 className="text-sm sm:text-xl font-headline font-bold text-primary mb-1">Mixed Sprout Salad (Trial)</h3>
-                <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹69</span>
+                <div className="flex items-baseline justify-center gap-2 mb-2">                  <span className="text-base sm:text-2xl font-bold text-black font-rupees rupee-symbol">₹89</span>
                   <span className="line-through text-muted-foreground font-rupees rupee-symbol">₹129</span>
                 </div>
                 <Button 
