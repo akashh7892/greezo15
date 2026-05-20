@@ -334,7 +334,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
         onClose={() => setShowJuiceSelection(false)}
         onSelect={handleJuiceSelection}
         planType={'trial'}
-        juicePrice={selectedTrial === 'navaratri' ? 49 : 49} // This is for a single juice
+        juicePrice={selectedTrial === 'navaratri' ? 99 : 99} // This is for a single juice
       />
 
       {/* Egg Add-on Modal */}
