@@ -103,7 +103,7 @@ export function JuiceSelectionModal({
         if (isHealthy) {
           onSelect(true, false, selectedJuices, initialJuicePrice);
         } else {
-          onSelect(false, true, selectedJuices, initialJuicePrice === 29 ? 59 : 25);
+          onSelect(false, true, selectedJuices, initialJuicePrice === 29 ? 59 : 59);
         }
       } else {
         onSelect(false, false, [], 0); // No juice selected
