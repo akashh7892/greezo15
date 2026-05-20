@@ -63,7 +63,7 @@ export function AddressModal({ isOpen, onClose, onAddressSelect }: AddressModalP
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-col gap-4">
             <div className="space-y-2">
               <Label htmlFor="flat">Flat / House No.</Label>
               <Input id="flat" value={flat} onChange={(e) => setFlat(e.target.value)} placeholder="e.g., A-123" />

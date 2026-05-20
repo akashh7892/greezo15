@@ -279,7 +279,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 59 : 99)}
+                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 59 : 49)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
