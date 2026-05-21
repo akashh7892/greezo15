@@ -23,9 +23,9 @@ type Plan = {
 };
 
 const plans: Plan[] = [
-  { id: 'w-basic', name: 'Basic Weekly Plan', price: 1299, originalPrice: 1999, type: 'weekly' },
+  { id: 'w-basic', name: 'Basic Weekly Plan', price: 1199, originalPrice: 1999, type: 'weekly' },
   { id: 'w-pro', name: 'Pro Weekly Plan', price: 1999, originalPrice: 2499, type: 'weekly', isComingSoon: true },
-  { id: 'm-basic', name: 'Basic Monthly Plan', price: 4799, originalPrice: 6799, type: 'monthly' },
+  { id: 'm-basic', name: 'Basic Monthly Plan', price: 4499, originalPrice: 5999, type: 'monthly' },
   { id: 'm-pro', name: 'Pro Monthly Plan', price: 7499, originalPrice: 9499, type: 'monthly', isComingSoon: true },
   { id: 'm-muesli', name: 'Monthly Muesli Plan', price: 4299, originalPrice: 7199, type: 'monthly' },
 ];
