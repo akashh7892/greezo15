@@ -166,9 +166,8 @@ export function JuiceSelectionModal({
                 </div>
               <div className="text-center space-y-1">
                 <div className="flex items-baseline justify-center gap-2">
-                  <p className="text-xl font-bold"><span className="font-rupees rupee-symbol">₹3
-                    
-                    </span></p>
+                  <p className="text-xl font-bold"><span className="font-rupees rupee-symbol">₹359
+                     </span></p>
                   <p className="text-sm line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹559</span></p>
                 </div>
                 <p className="text-xs text-muted-foreground">One juice per day for 6 days.</p> 
