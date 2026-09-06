@@ -62,6 +62,11 @@ export default function GreezoGoPage() {
           <ContactSection />
         </div>
       </main>
+      <footer className="py-4 text-center">
+        <a href="/admin" className="text-xs text-muted-foreground hover:text-primary">
+          Admin
+        </a>
+      </footer>
     </div>
   );
 }

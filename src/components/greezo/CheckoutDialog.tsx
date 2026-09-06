@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import { saveOrderToSupabase } from '@/app/actions';
 
 export interface CheckoutPlanInfo {
   name: string;
@@ -326,10 +327,26 @@ export function CheckoutDialog({ isOpen, onClose, planInfo }: CheckoutDialogProp
       return;
     }
 
+    // Save the confirmed order for the admin dashboard. The existing WhatsApp
+    // flow below continues even if the database is temporarily unavailable.
+    void saveOrderToSupabase({
+      customerName,
+      phoneNumber,
+      plan: planNameWithEgg,
+      type: planInfo.hasEgg ? 'Egg' : 'Veg',
+      juicePack: planInfo.juiceAdded ? 'Yes' : 'No',
+      selectedJuices: planInfo.selectedJuices.join(', '),
+      startDate: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : 'ASAP',
+      shift: preferredShift,
+      address: `${address}, ${nearbyLocation}`,
+      price: String(totalPrice),
+      paymentMethod: 'Cash on Delivery',
+      paymentStatus: 'confirmed',
+    }).catch((error) => console.error('Order storage failed:', error));
+
     toast({
-      title: "Redirecting to WhatsApp",
-      description:
-        "Please wait a moment. We're preparing your order details for WhatsApp.",
+      title: "Your order is confirmed",
+      description: "You will receive a WhatsApp message within five minutes.",
     });
 
     const message = `

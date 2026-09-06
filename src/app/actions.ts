@@ -1,7 +1,7 @@
 
 'use server';
 
-import { supabase, type OrderInsert } from '@/lib/supabase';
+import { supabase, type Order, type OrderInsert } from '@/lib/supabase';
 import { addOrderToSheet, type OrderData as SheetsOrderData } from '@/lib/sheets';
 import {
   generateWhatsAppMessage,
@@ -23,6 +23,28 @@ type OrderData = {
   transactionId?: string;
   paymentStatus?: string;
 };
+
+/** Returns only orders from the last 24 hours for the admin dashboard. */
+export async function getRecentOrders(): Promise<{ success: boolean; orders: Order[]; error?: string }> {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .gte('created_at', oneDayAgo)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Could not load recent orders:', error);
+      return { success: false, orders: [], error: 'Could not load recent orders.' };
+    }
+
+    return { success: true, orders: data || [] };
+  } catch (error) {
+    console.error('Could not load recent orders:', error);
+    return { success: false, orders: [], error: 'Could not load recent orders.' };
+  }
+}
 
 export async function saveOrderToSupabase(orderData: OrderData): Promise<{ success: boolean; error?: string; orderId?: string; sheetOrderId?: string | null }> {
   try {
