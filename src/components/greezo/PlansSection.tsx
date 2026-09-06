@@ -305,7 +305,6 @@ export function PlansSection({ hasEgg }: PlansSectionProps) {
         onClose={() => setShowJuiceSelectionModal(false)}
         onSelect={handleJuiceSelectionFromModal}
         planType="subscription"
-        juicePrice={selectedPlan?.type === 'weekly' ? 399 : 1599}
       />
       <CheckoutDialog
         isOpen={showCheckoutDialog}

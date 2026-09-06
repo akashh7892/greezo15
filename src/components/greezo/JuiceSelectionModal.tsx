@@ -12,8 +12,20 @@ interface JuiceSelectionModalProps {
   onClose: () => void;
   onSelect: (healthySelected: boolean, freshSelected: boolean, selectedJuices?: string[], juicePrice?: number) => void;
   planType?: 'trial' | 'subscription';
-  juicePrice?: number;
+  offerType?: 'trial' | 'combo';
 }
+
+// Trial and two-salad combo prices are deliberately separate, so an update to
+// one offer can never change the other offer's display or checkout amount.
+const TRIAL_JUICE_PRICING = {
+  healthy: { price: 49, originalPrice: 119 },
+  premium: { price: 59, originalPrice: 119 },
+} as const;
+
+const COMBO_JUICE_PRICING = {
+  healthy: { price: 99, originalPrice: 198 },
+  premium: { price: 119, originalPrice: 249 },
+} as const;
 
 const ALL_JUICES = [
   {
@@ -66,12 +78,15 @@ export function JuiceSelectionModal({
   onClose,
   onSelect,
   planType = 'trial',
-  juicePrice: initialJuicePrice = 29
+  offerType = 'trial',
 }: JuiceSelectionModalProps) {
   const [selectedJuices, setSelectedJuices] = useState<string[]>([]);
   const [healthyJuiceAdded, setHealthyJuiceAdded] = useState(false);
   const [freshJuiceAdded, setFreshJuiceAdded] = useState(false);
   const freshJuiceSectionRef = useRef<HTMLDivElement>(null);
+  const trialPricing = offerType === 'combo'
+    ? COMBO_JUICE_PRICING
+    : TRIAL_JUICE_PRICING;
 
   const getJuicesToShow = () => {
     return planType === 'trial' ? TRIAL_JUICES : ALL_JUICES;
@@ -79,7 +94,7 @@ export function JuiceSelectionModal({
     return ALL_JUICES;
   };
 
-  const handleJuiceToggle = (juiceName: string, price: number) => {
+  const handleJuiceToggle = (juiceName: string) => {
     if (planType === 'trial') {
       setSelectedJuices(prev => (prev[0] === juiceName ? [] : [juiceName]));
       // We'll pass the price back through the onSelect function
@@ -101,9 +116,9 @@ export function JuiceSelectionModal({
         // For trial, determine which pack was selected to pass the correct price
         const isHealthy = TRIAL_HEALTHY_JUICES.some(j => j.name === selectedJuices[0]);
         if (isHealthy) {
-          onSelect(true, false, selectedJuices, initialJuicePrice);
+          onSelect(true, false, selectedJuices, trialPricing.healthy.price);
         } else {
-          onSelect(false, true, selectedJuices, initialJuicePrice === 29 ? 59 : 59);
+          onSelect(false, true, selectedJuices, trialPricing.premium.price);
         }
       } else {
         onSelect(false, false, [], 0); // No juice selected
@@ -230,14 +245,14 @@ export function JuiceSelectionModal({
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
                   <p className="text-2xl font-bold text-primary">
-                       <span className="font-rupees rupee-symbol">₹49</span>
+                       <span className="font-rupees rupee-symbol">₹{trialPricing.healthy.price}</span>
                         </p>
 
                       <p className="text-md line-through text-muted-foreground">
-                         <span className="font-rupees rupee-symbol">₹99</span>
+                          <span className="font-rupees rupee-symbol">₹{trialPricing.healthy.originalPrice}</span>
                       </p>
                 </div>
-                {initialJuicePrice === 29 && (
+                {offerType === 'combo' && (
                   <p className="text-xs text-green-600 font-semibold">This plan includes 2 juices. Select one, and we'll deliver two of the same!</p>
                 )}
                 <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
@@ -249,7 +264,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice)}
+                    onClick={() => handleJuiceToggle(juice.name)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
@@ -271,8 +286,8 @@ export function JuiceSelectionModal({
             <div className="space-y-3 pt-4 border-t">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 59 : 119}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 129 : 298}</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{trialPricing.premium.price}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{trialPricing.premium.originalPrice}</span></p>
                 </div>
                 <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
               </div>
@@ -283,7 +298,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 129 :49)}
+                    onClick={() => handleJuiceToggle(juice.name)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
