@@ -229,8 +229,13 @@ export function JuiceSelectionModal({
             <div className="space-y-3">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 49}</span></p>
+                  <p className="text-2xl font-bold text-primary">
+                       <span className="font-rupees rupee-symbol">₹49</span>
+                        </p>
+
+                      <p className="text-md line-through text-muted-foreground">
+                         <span className="font-rupees rupee-symbol">₹99</span>
+                      </p>
                 </div>
                 {initialJuicePrice === 29 && (
                   <p className="text-xs text-green-600 font-semibold">This plan includes 2 juices. Select one, and we'll deliver two of the same!</p>
