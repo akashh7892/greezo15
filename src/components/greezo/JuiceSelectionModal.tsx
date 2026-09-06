@@ -230,7 +230,7 @@ export function JuiceSelectionModal({
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
                   <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 99}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 49}</span></p>
                 </div>
                 {initialJuicePrice === 29 && (
                   <p className="text-xs text-green-600 font-semibold">This plan includes 2 juices. Select one, and we'll deliver two of the same!</p>
@@ -278,7 +278,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 59 : 49)}
+                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 129 :49)}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
