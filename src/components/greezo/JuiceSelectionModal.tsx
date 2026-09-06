@@ -271,8 +271,8 @@ export function JuiceSelectionModal({
             <div className="space-y-3 pt-4 border-t">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 59 : 59}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 129 : 149}</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 59 : 119}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 129 : 298}</span></p>
                 </div>
                 <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
               </div>
