@@ -19,7 +19,7 @@ interface JuiceSelectionModalProps {
 // one offer can never change the other offer's display or checkout amount.
 const TRIAL_JUICE_PRICING = {
   healthy: { price: 49, originalPrice: 119 },
-  premium: { price: 59, originalPrice: 119 },
+  premium: { price: 59, originalPrice: 129 },
 } as const;
 
 const COMBO_JUICE_PRICING = {
