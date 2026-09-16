@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
+  <url>
+    <loc>https://www.greezo.in/</loc>
+    <image:image>
+      <image:loc>https://www.greezo.in/images/greezo-logo.jpg</image:loc>
+      <image:caption>Greezo logo</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.greezo.in/products/protein-sprout</loc>
+    <image:image>
+      <image:loc>https://www.greezo.in/images/fresh-juices/apple-smoothie.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/fresh-juices/banana-dates-smoothie.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/fresh-juices/grapes-juice.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/fresh-juices/tender-coconut.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/fresh-juices/lime-chia-juice.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/fresh-juices/apple-smoothie.png</image:loc>
+
+      
+      <image:loc>https://www.greezo.in/images/meals/corn.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/meals/kabul.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/meals/mix.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/meals/oats.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/meals/soya.png</image:loc>
+      
+      <image:loc>https://www.greezo.in/images/meals/paneer.png</image:loc>
+      <image:caption>Greezo protein sprouts healthy snack India</image:caption>
+    </image:image>
+  </url>
+</urlset>

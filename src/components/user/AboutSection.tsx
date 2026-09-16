@@ -1,0 +1,67 @@
+
+"use client";
+
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from 'next/image';
+
+export function AboutSection() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  return (
+    <section id="about" className="py-16 sm:py-24 bg-card">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto text-center">
+          <div
+            ref={ref}
+            className={`transition-all duration-1000 ease-out ${isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
+          >
+            <h2 className="text-3xl sm:text-4xl font-headline font-bold text-primary mb-6">About Greezo</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed text-left md:text-center">
+              At Greezo, we believe that healthy eating should be both simple and delicious. We provide fresh, natural, and nutritionally balanced meals designed to help you lead a vibrant and nourished life without the hassle of cooking.
+            </p><p className="text-lg text-muted-foreground leading-relaxed mt-4 text-left md:text-center">
+              Our chefs use only the highest quality ingredients, sourced locally whenever possible, to create a rotating menu that's as exciting as it is wholesome. Join the Greezo family and rediscover the joy of eating well.
+            </p>
+            <div className="mt-8 pt-8 border-t border-primary/20">
+              <h3 className="text-xl sm:text-2xl font-headline font-bold text-primary mb-4">Leetu's kitchen (Cloud Kitchen)</h3>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-left md:text-center">
+                Here we are preparing our products. Check out the details below:
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mt-2 text-left md:text-center">
+                <strong>Location:</strong> #32, 1st main, 1st cross, Muneshwara Layout, near new horizon college, Kadubeesanahalli, Panathur, Bengaluru, Karnataka 560103
+                <br />
+                <a href="https://www.google.com/maps/search/?api=1&query=Leetu's+Kitchen(Cloud+Kitchen),+Kadubeesanahalli,+Bengaluru" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm sm:text-base">View on Google Maps</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
