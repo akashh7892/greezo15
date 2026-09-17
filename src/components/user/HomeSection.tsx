@@ -78,7 +78,7 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       price = 189;
       planHasEgg = extraEggCount > 0;
       finalHasEgg = hasEgg || extraEggCount > 0;
-      finalJuicePrice = juicePrice !== undefined ? juicePrice : 45; // Special juice price for combo
+      finalJuicePrice = juicePrice !== undefined ? juicePrice : 99; // Special doubled juice price for the 2-salad combo
     }
 
     const juiceAdded = healthySelected || freshSelected;
@@ -333,13 +333,14 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
       />
 
       {/* Juice Selection Modal */}
-      <JuiceSelectionModal
-        isOpen={showJuiceSelection}
-        onClose={() => setShowJuiceSelection(false)}
-        onSelect={handleJuiceSelection}
-        planType={'trial'}
-        juicePrice={selectedTrial === 'navaratri' ? 49 : 99} // This is for a single juice
-      />
+<JuiceSelectionModal
+  isOpen={showJuiceSelection}
+  onClose={() => setShowJuiceSelection(false)}
+  onSelect={handleJuiceSelection}
+  planType={'trial'}
+  juicePrice={selectedTrial === 'navaratri' ? 99 : 99} // Navaratri is the combo; price is doubled inside the modal via isCombo
+  isCombo={selectedTrial === 'navaratri'}
+/>
 
       {/* Egg Add-on Modal */}
       <Dialog open={showEggCounterModal} onOpenChange={setShowEggCounterModal}>

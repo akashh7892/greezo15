@@ -50,7 +50,6 @@ export default function Home() {
       ) : (
         <main>
           <HomeSection onScrollToPlans={() => scrollToSection('plans')} hasEgg={hasEgg} />
-          <JuicesSection />
           <PlansSection hasEgg={hasEgg} />
           <AboutSection />
           <ContactSection />

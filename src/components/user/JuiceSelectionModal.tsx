@@ -13,6 +13,8 @@ interface JuiceSelectionModalProps {
   onSelect: (healthySelected: boolean, freshSelected: boolean, selectedJuices?: string[], juicePrice?: number) => void;
   planType?: 'trial' | 'subscription';
   juicePrice?: number;
+  /** When true, this is a combo (2-salad) trial: juice prices double and the user gets 2 of the same juice. */
+  isCombo?: boolean;
 }
 
 const ALL_JUICES = [
@@ -66,7 +68,8 @@ export function JuiceSelectionModal({
   onClose,
   onSelect,
   planType = 'trial',
-  juicePrice: initialJuicePrice = 29
+  juicePrice: initialJuicePrice = 29,
+  isCombo = false
 }: JuiceSelectionModalProps) {
   const [selectedJuices, setSelectedJuices] = useState<string[]>([]);
   const [healthyJuiceAdded, setHealthyJuiceAdded] = useState(false);
@@ -101,9 +104,9 @@ export function JuiceSelectionModal({
         // For trial, determine which pack was selected to pass the correct price
         const isHealthy = TRIAL_HEALTHY_JUICES.some(j => j.name === selectedJuices[0]);
         if (isHealthy) {
-          onSelect(true, false, selectedJuices, initialJuicePrice);
+          onSelect(true, false, selectedJuices, isCombo ? 99 : initialJuicePrice);
         } else {
-          onSelect(false, true, selectedJuices, initialJuicePrice === 29 ? 59 : 59);
+          onSelect(false, true, selectedJuices, isCombo ? 129 : 59);
         }
       } else {
         onSelect(false, false, [], 0); // No juice selected
@@ -230,10 +233,13 @@ export function JuiceSelectionModal({
             <div className="space-y-3">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 69 : 99}</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{isCombo ? 99 : initialJuicePrice}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{isCombo ? 199 : (initialJuicePrice === 29 ? 69 : 99)}</span></p>
                 </div>
-                {initialJuicePrice === 29 && (
+                {isCombo && (
+                  <p className="text-xs text-green-600 font-semibold">Pack of 2 juices! Select one flavor and we'll deliver two of the same.</p>
+                )}
+                {!isCombo && initialJuicePrice === 29 && (
                   <p className="text-xs text-green-600 font-semibold">This plan includes 2 juices. Select one, and we'll deliver two of the same!</p>
                 )}
                 <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
@@ -267,9 +273,12 @@ export function JuiceSelectionModal({
             <div className="space-y-3 pt-4 border-t">
               <div className="text-center">
                 <div className="flex items-baseline justify-center gap-2 mb-1">
-                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 59 : 59}</span></p>
-                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{initialJuicePrice === 29 ? 129 : 149}</span></p>
+                  <p className="text-2xl font-bold text-primary"><span className="font-rupees rupee-symbol">₹{isCombo ? 129 : 59}</span></p>
+                  <p className="text-md line-through text-muted-foreground"><span className="font-rupees rupee-symbol">₹{isCombo ? 249 : (initialJuicePrice === 29 ? 129 : 149)}</span></p>
                 </div>
+                {isCombo && (
+                  <p className="text-xs text-green-600 font-semibold">Pack of 2 premium juices! Select one flavor and we'll deliver two of the same.</p>
+                )}
                 <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -279,7 +288,7 @@ export function JuiceSelectionModal({
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
                       selectedJuices[0] === juice.name ? 'ring-2 ring-primary' : 'ring-1 ring-transparent'
                     }`}
-                    onClick={() => handleJuiceToggle(juice.name, initialJuicePrice === 29 ? 59 : 49)}
+                    onClick={() => handleJuiceToggle(juice.name, isCombo ? 129 : (initialJuicePrice === 29 ? 59 : 49))}
                   >
                     <CardContent className="p-0 flex flex-col text-center relative aspect-square justify-center">
                       <Image src={juice.image} alt={juice.name} width={80} height={80} className="object-cover aspect-square w-full rounded-t-xl" />
