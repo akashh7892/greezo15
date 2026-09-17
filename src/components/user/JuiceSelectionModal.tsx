@@ -244,8 +244,8 @@ export function JuiceSelectionModal({
                 )}
                 <p className="text-sm text-muted-foreground">Select a Healthy Juice</p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {TRIAL_HEALTHY_JUICES.map((juice) => (
+              <div className="grid grid-cols-3 gap-2">
+  {TRIAL_HEALTHY_JUICES.map((juice) => (
                   <Card
                     key={juice.name}
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${
@@ -281,8 +281,8 @@ export function JuiceSelectionModal({
                 )}
                 <p className="text-sm text-muted-foreground">Or try a premium Fresh Juice</p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {TRIAL_FRESH_JUICES.map((juice) => (
+              <div className="grid grid-cols-3 gap-2">
+  {TRIAL_FRESH_JUICES.map((juice) => (
                   <Card
                     key={juice.name}
                     className={`overflow-hidden rounded-xl border-border/50 transition-all cursor-pointer hover:shadow-lg hover:-translate-y-1 ${

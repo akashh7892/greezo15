@@ -338,8 +338,8 @@ export function HomeSection({ onScrollToPlans, hasEgg }: HomeSectionProps) {
   onClose={() => setShowJuiceSelection(false)}
   onSelect={handleJuiceSelection}
   planType={'trial'}
-  juicePrice={selectedTrial === 'navaratri' ? 99 : 99} // Navaratri is the combo; price is doubled inside the modal via isCombo
-  isCombo={selectedTrial === 'navaratri'}
+  juicePrice={selectedTrial === 'navaratri' ? 99 : 49} // Navaratri is the combo; price is doubled inside the modal via isCombo
+isCombo={selectedTrial === 'navaratri'}
 />
 
       {/* Egg Add-on Modal */}
